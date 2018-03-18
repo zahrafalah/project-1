@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+
+  <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Unborable Sign-Up</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  
+
+    <!-- Firebase Reference -->
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+
+    <!-- Moment.js Reference -->
+    <!-- <script src="http://momentjs.com/downloads/moment.js"></script>   -->
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+
+  </head>
+  <body>
+    <div class="col-md-4 panel panel-primary" style="padding:0px">
+        <div class="panel-heading">
+          <h3 class="panel-title text-center"><strong>Start using Unborable today. No email required!</strong></h3>
+        </div>
+        <div class="panel-body">
+
+          <!-- Entry Form -->
+          <form id="signup" class="col-md-6">
+            <div class="form-group">
+              <label for="username-input">User Name</label>
+              <input class="form-control" required=true id="username-input" type="text">
+            </div>
+            <div class="form-group">
+              <label for="pin-input">PIN Code<span><h6>(min 4 characters)</h6></span><span ><h6 id="pinError" style="color:red"></h6></span></label>
+              <input class="form-control" required=true id="pin-input" type="text">
+            </div>
+            <button class="btn btn-primary" id="add-user-btn" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+
+      
+      <div class="row col-md-12">
+            <h2>login form</h2>
+      <div class="col-md-4 panel panel-primary" style="padding:0px">
+        <div class="panel-heading">
+          <h3 class="panel-title text-center"><strong>Welcome back! Enter your user id and PIN code.</strong></h3>
+        </div>
+
+      <div class="panel-body">
+
+        <!-- Entry Form -->
+        <form id="login" class="col-md-6">
+          <div class="form-group">
+            <label for="login-username">User Name</label>
+            <input class="form-control" required=true id="login-username" type="text">
+          </div>
+          <div class="form-group">
+            <label for="login-pin">PIN Code<span><h6>(min 4 characters)</h6></span><span ><h6 id="loginError" style="color:red"></h6></span></label>
+            <input class="form-control" required=true id="login-pin" type="text">
+          </div>
+          <button class="btn btn-primary" id="login-btn" type="submit">Log In</button>
+          <button class="btn btn-primary" id="logout-btn" type="submit">Log Out</button>
+        </form>
+      </div>
+    </div>
+</div> <!--end row-->
+
+
+      <script src="login.js"></script>
+  </body>
+
+
+
+  </html>
