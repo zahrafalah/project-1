@@ -43,13 +43,24 @@ $("#add-user-btn").on("click", function(event) {
   };
   //user input validation
 
-  if (pinCode.length < 4) {
-    $("#pinError").text("Your PIN must be at least 4 characters.");
-    $("#pin-input").val("");
-  }
-  else {
-  // Uploads employee data to the database
-  database.ref("users/" + userName).set(newUser);
+  
+  //check database for duplicate user name
+  database.ref("/users/"+userName).once("value").then(function(response) {
+    if(response.val()!==null) {
+      $("#usernameError").text("That user name is already taken. Please choose another.");
+    }
+    else if (pinCode.length < 4) {
+      $("#pinError").text("Your PIN must be at least 4 characters.");
+      $("#pin-input").val("");
+    }
+    else {
+      // Upload new user record to the database
+      database.ref("users/" + userName).set(newUser);
+  
+      //DO SOMETHING ELSE - REPLACE THE LOGIN FORM WITH THE USER'S SAVED ITEMS OR WHATEVER
+    }
+  });
+  
 
   // Logs everything to console
   console.log(newUser.userName);
@@ -58,13 +69,10 @@ $("#add-user-btn").on("click", function(event) {
   
 
   // Alert
-  alert("Welcome to Unborable!");
+ // alert("Welcome to Unborable!");
 
-  // Clears all of the text-boxes
-  $("#username-input").val("");
-  $("#pin-input").val("");
-  $("#pinError").text("");
-  };
+
+  
 });
 
 
