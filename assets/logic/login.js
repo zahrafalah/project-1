@@ -1,12 +1,64 @@
 
+var clientID='Hv6x2ZbdqnFmcWVm';
+var queryURL = "http://api.eventful.com/json/events/search?...&location=";
+var tag;
 
 var loginState="loggedOut";
 var userName;
 var pinCode;
 var addDate;
+var userLocation;
 
+function getEventfulEvents(userLocation)
+{
+    var oArgs = {
+    app_key: clientID,
+    category: "family_fun_kids",
+    where: userLocation, 
+    "date": "future", 
+    page_size: 25,
+    sort_order: "popularity"
+  }
+  EVDB.API.call("/events/search", oArgs, function(results) {
+  // Note: this relies on the custom toString() methods below
+  console.log(results);
+ // makeEventCards(results);
+  });
+}
 
+function makeEventCards(results){
+  console.log("made it to make event cards");
+  console.log(results);
 
+}
+
+$("#welcome").on("submit",function(event){
+  event.preventDefault();
+  userLocation = $("#startText").val().toString();
+  console.log(userLocation);
+  window.open("tempSecondPage.html","_self");
+  $("#currentLoc").html('Currently Searching:'+userLocation);
+  getEventfulEvents(userLocation);
+
+})
+
+$("#addTerm").on("submit",function(event){
+  event.preventDefault();
+  userLocation = $("#startText").val();
+  window.open("tempSecondPage.html","_self");
+  $("#currentLoc").html('Currently Searching:'+userLocation);
+  getEventfulEvents();
+
+})
+
+$("#welcome").on("submit",function(event){
+  event.preventDefault();
+  userLocation = $("#startText").val();
+  window.open("tempSecondPage.html","_self");
+  $("#currentLoc").html('Currently Searching:'+userLocation);
+  getEventfulEvents();
+
+})
 
   // Initialize Firebase
   var config = {
