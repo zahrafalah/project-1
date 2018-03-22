@@ -87,6 +87,8 @@ function makeEventCards(){
 
   }//end for loop
   // add 'next 25 button'
+  //i meant for this button to display at the end of the list of events, but it is
+  //showing at the top
     var nextButton = $("<button>")
     nextButton.attr("id","getNext")
     nextButton.attr("class","btn btn-lg");
