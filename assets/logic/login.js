@@ -8,9 +8,16 @@ var userName;
 var pinCode;
 var addDate;
 var userLocation;
+var resultSet=[];
 
-function getEventfulEvents(userLocation)
+// function getEventsFunction(_callback){
+//   getEventfulEvents();
+//   _callback();
+// }
+
+async function getEventfulEvents()
 {
+  console.log("userloc: "+userLocation);
     var oArgs = {
     app_key: clientID,
     category: "family_fun_kids",
@@ -19,46 +26,56 @@ function getEventfulEvents(userLocation)
     page_size: 25,
     sort_order: "popularity"
   }
-  EVDB.API.call("/events/search", oArgs, function(results) {
+  let promise = await EVDB.API.call("/events/search", oArgs, function(results) {
   // Note: this relies on the custom toString() methods below
   console.log(results);
- // makeEventCards(results);
+  console.log(results.events.event[0]);
+  resultSet=results;
+  
+ 
   });
+  let result = await promise
+  makeEventCards();
 }
 
-function makeEventCards(results){
+function makeEventCards(){
   console.log("made it to make event cards");
-  console.log(results);
+  console.log(resultSet.events);
 
 }
 
-$("#welcome").on("submit",function(event){
+$("#startButton").on("click",function(event){
   event.preventDefault();
   userLocation = $("#startText").val().toString();
   console.log(userLocation);
-  window.open("tempSecondPage.html","_self");
-  $("#currentLoc").html('Currently Searching:'+userLocation);
-  getEventfulEvents(userLocation);
-
-})
-
-$("#addTerm").on("submit",function(event){
-  event.preventDefault();
-  userLocation = $("#startText").val();
-  window.open("tempSecondPage.html","_self");
-  $("#currentLoc").html('Currently Searching:'+userLocation);
   getEventfulEvents();
+ // getEventfulEvents();
+//   window.open("tempSecondPage.html","_self");
+  // $("#currentLoc").html('Currently Searching:'+userLocation);
+  
+  //change the page around - clear out the divs, set up for user to use
+//  makeEventCards(resultSet);
 
-})
+});
 
-$("#welcome").on("submit",function(event){
-  event.preventDefault();
-  userLocation = $("#startText").val();
-  window.open("tempSecondPage.html","_self");
-  $("#currentLoc").html('Currently Searching:'+userLocation);
-  getEventfulEvents();
+// $("#addTerm").on("submit",function(event){
+//   event.preventDefault();
+//   userLocation = $("#startText").val();
+//   window.open("tempSecondPage.html","_self");
+//   $("#currentLoc").html('Currently Searching:'+userLocation);
+//   getEventfulEvents(userLocation);
 
-})
+// })
+
+// $("#welcome").on("submit",function(event){
+//   event.preventDefault();
+//   userLocation = $("#startText").val();
+//   // window.open("tempSecondPage.html","_self");
+//   // $("#currentLoc").html('Currently Searching:'+userLocation);
+//   getEventfulEvents();
+
+
+// })
 
   // Initialize Firebase
   var config = {
@@ -91,7 +108,15 @@ $("#add-user-btn").on("click", function(event) {
     userName: userName,
     pinCode: pinCode,
     addDate: addDate,  
-    loginState : loginState 
+    loginState : loginState,
+    savedEvents:[
+      {
+        eventID:"",
+        location:"",
+        title:"",
+        imageURLsmall:""
+      }
+    ] 
   };
   //user input validation
 
