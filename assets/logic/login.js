@@ -9,46 +9,114 @@ var pinCode;
 var addDate;
 var userLocation;
 var resultSet=[];
+var resultItems=[];
+var pagenumber = 1;
+var oArgs = {
+  app_key: clientID,
+  category: "family_fun_kids",
+  where: userLocation, 
+  "date": "future", 
+  page_size: 25,
+  page_number:pagenumber,
+  sort_order: "popularity"
+}
+
+
+
 
 // function getEventsFunction(_callback){
 //   getEventfulEvents();
 //   _callback();
 // }
 
-async function getEventfulEvents()
+function getEventfulEvents(pagenumber)
 {
   console.log("userloc: "+userLocation);
-    var oArgs = {
-    app_key: clientID,
-    category: "family_fun_kids",
-    where: userLocation, 
-    "date": "future", 
-    page_size: 25,
-    sort_order: "popularity"
-  }
-  let promise = await EVDB.API.call("/events/search", oArgs, function(results) {
+    
+  EVDB.API.call("/events/search", oArgs, function(results) {
   // Note: this relies on the custom toString() methods below
   console.log(results);
-  console.log(results.events.event[0]);
   resultSet=results;
-  
- 
-  });
-  let result = await promise
   makeEventCards();
+  
+  
+  });
+}
+//enhancement -- 'get next 25 events' button
+function getNext25(){
+  resultItems=[]; //clear resultItems array
+  $("#cardHolder").clear(); //clear cardHolder section
+  pagenumber++; //increase pagenumber 
+  getEventfulEvents(pagenumber); //get new events
 }
 
 function makeEventCards(){
   console.log("made it to make event cards");
-  console.log(resultSet.events);
+  console.log(resultSet.events.event[0]);
+  //for each item in the result set, make an item that we can use and push it into a temporary array
+  //called resultItems. we can then use these items to create the cards, push to the user's saved items, etc
+  //we can reference the item in the array by the unique 'id' value
+  for (var i=0;i<resultSet.events.event.length;i++){
+    var resultItem = resultSet.events.event[i]; 
+    var eventItem = {
+      id:resultItem.id,
+      title:resultItem.title,
+      address:resultItem.venueAddress,
+      city:resultItem.city_name,
+      state:resultItem.region_abbr,
+      zip:resultItem.postal_code,
+      startTime=resultItem.startTime,
+      venue:resultItem.venue_name,
+      venueURL:resultItem.venue_url,
+      imageURL:resultItem.image.medium.url,
+      description:resultItem.description,
+      latitude : resultItem.latitude,
+      longitude : resultItem.longitude
+    };
+    resultItems.push(eventItem);
+    console.log(eventItem);
+    var newCard = $("<div>");
+    var removeLink = $("<a/>");
+    removeLink.attr("class","removeLink");
+    removeLink.text("Remove Me");
+    newCard.append(removeLink);
+    newCard.attr("class","eventCard col-md-8");
+    newCard.attr("id",eventItem.id);//unique id we can use to reference this object
+    newCard.html("Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br><br>----------------------<br>")
+    $("#cardHolder").append(newCard);
+
+  }//end for loop
 
 }
+
+$(document).on("dblclick",".eventCard",function(){
+  
+  var id=$(this).attr("id");
+  console.log("removing ID: ",id);
+  var itemIndex = findInArray(resultItems,"id",id);
+      resultItems.splice(itemIndex,1);//remove item from resultItems array
+      $(this).remove();
+  console.log("new resultItems count",resultItems.length);
+})
+
+function findInArray(array,attribute,value){
+  for (var i = 0;i<array.length;i++){
+    if(array[i][attribute]==value) {
+      return i;
+    }
+  }
+    return -1; //else
+}
+function removeMe(element) 
+    {
+      $(element).remove();//remove the entire div
+    }
 
 $("#startButton").on("click",function(event){
   event.preventDefault();
   userLocation = $("#startText").val().toString();
   console.log(userLocation);
-  getEventfulEvents();
+  getEventfulEvents(pagenumber);//
  // getEventfulEvents();
 //   window.open("tempSecondPage.html","_self");
   // $("#currentLoc").html('Currently Searching:'+userLocation);
