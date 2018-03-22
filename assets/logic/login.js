@@ -10,29 +10,24 @@ var addDate;
 var userLocation;
 var resultSet=[];
 var resultItems=[];
-var pagenumber = 1;
+var pageNumber = 1;
+
 var oArgs = {
   app_key: clientID,
   category: "family_fun_kids",
-  where: userLocation, 
+  where: "", 
   "date": "future", 
   page_size: 25,
-  page_number:pagenumber,
+  page_number:pageNumber,
   sort_order: "popularity"
 }
 
 
 
-
-// function getEventsFunction(_callback){
-//   getEventfulEvents();
-//   _callback();
-// }
-
-function getEventfulEvents(pagenumber)
+function getEventfulEvents()
 {
   console.log("userloc: "+userLocation);
-    
+  oArgs.where=userLocation; //set location for query arguments
   EVDB.API.call("/events/search", oArgs, function(results) {
   // Note: this relies on the custom toString() methods below
   console.log(results);
@@ -42,22 +37,21 @@ function getEventfulEvents(pagenumber)
   
   });
 }
-//enhancement -- 'get next 25 events' button
-function getNext25(){
-  resultItems=[]; //clear resultItems array
-  $("#cardHolder").clear(); //clear cardHolder section
-  pagenumber++; //increase pagenumber 
-  getEventfulEvents(pagenumber); //get new events
-}
 
 function makeEventCards(){
   console.log("made it to make event cards");
   console.log(resultSet.events.event[0]);
-  //for each item in the result set, make an item that we can use and push it into a temporary array
+  //for each event item in the result set, make an item that we can use and push it into a temporary array
   //called resultItems. we can then use these items to create the cards, push to the user's saved items, etc
   //we can reference the item in the array by the unique 'id' value
   for (var i=0;i<resultSet.events.event.length;i++){
     var resultItem = resultSet.events.event[i]; 
+
+    if(resultItem.description==null){      //error handling for NULL event description - just makes the 
+      var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
+    }
+    else var eventDesc=resultItem.description;
+
     var eventItem = {
       id:resultItem.id,
       title:resultItem.title,
@@ -65,39 +59,79 @@ function makeEventCards(){
       city:resultItem.city_name,
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
-      startTime=resultItem.startTime,
+      startTime:resultItem.start_time,
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
-      description:resultItem.description,
+      description:eventDesc,
       latitude : resultItem.latitude,
       longitude : resultItem.longitude
     };
-    resultItems.push(eventItem);
+    resultItems.push(eventItem); //push item into temp array
     console.log(eventItem);
     var newCard = $("<div>");
     var removeLink = $("<a/>");
     removeLink.attr("class","removeLink");
-    removeLink.text("Remove Me");
-    newCard.append(removeLink);
+    removeLink.text("Not Interested");
+    var saveEventLink = $("<a/>");
+    saveEventLink.attr("class","saveLink");
+    saveEventLink.text("Save this one!");
     newCard.attr("class","eventCard col-md-8");
     newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-    newCard.html("Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br><br>----------------------<br>")
+    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>")
+    newCard.append(removeLink);
+    newCard.append("<br>");
+    newCard.append(saveEventLink);
+    
     $("#cardHolder").append(newCard);
 
   }//end for loop
+  // add 'next 25 button'
+    var nextButton = $("<button>")
+    nextButton.attr("id","getNext")
+    nextButton.attr("class","btn btn-lg");
+    nextButton.text("Get Next 25 Events");
+
+    $("#cardHolder").append(nextButton);
 
 }
 
-$(document).on("dblclick",".eventCard",function(){
+
+
+
+
+
+
+//make the 'not interested' link do something
+
+$(document).on("click",".removeLink",function(){
   
-  var id=$(this).attr("id");
+  var id=$(this).parent().attr("id");
   console.log("removing ID: ",id);
   var itemIndex = findInArray(resultItems,"id",id);
       resultItems.splice(itemIndex,1);//remove item from resultItems array
-      $(this).remove();
+      $(this).parent().remove();
   console.log("new resultItems count",resultItems.length);
-})
+});
+
+
+//bookmark event item
+
+$(document).on("click",".saveLink",function(){
+  //check to see if user is logged in - if not, remindAboutSigningUp()
+  //if user is logged in, proceed:
+  var id=$(this).parent().attr("id");
+  console.log("saving ID: ",id);
+  var itemIndex = findInArray(resultItems,"id",id);
+  var saveObject = resultItems[i];
+  //push saveObject to users/saveditems
+  //move $(this).parent() to 'saved items' section (top right)
+  console.log("new resultItems count",resultItems.length);
+});
+
+
+//function to find the position of an object in an array based on the value of
+//one of its attributes
 
 function findInArray(array,attribute,value){
   for (var i = 0;i<array.length;i++){
@@ -107,43 +141,56 @@ function findInArray(array,attribute,value){
   }
     return -1; //else
 }
+
+//removes the element passed into the function
+
 function removeMe(element) 
     {
-      $(element).remove();//remove the entire div
+      $(element).remove();//remove the entire element
     }
+
 
 $("#startButton").on("click",function(event){
   event.preventDefault();
   userLocation = $("#startText").val().toString();
   console.log(userLocation);
-  getEventfulEvents(pagenumber);//
- // getEventfulEvents();
-//   window.open("tempSecondPage.html","_self");
-  // $("#currentLoc").html('Currently Searching:'+userLocation);
-  
-  //change the page around - clear out the divs, set up for user to use
-//  makeEventCards(resultSet);
+  getEventfulEvents();//
 
 });
 
-// $("#addTerm").on("submit",function(event){
-//   event.preventDefault();
-//   userLocation = $("#startText").val();
-//   window.open("tempSecondPage.html","_self");
-//   $("#currentLoc").html('Currently Searching:'+userLocation);
-//   getEventfulEvents(userLocation);
 
-// })
-
-// $("#welcome").on("submit",function(event){
+//enhancement - allow the user to add additional keywords to their search - requires a text input field 
+//called 'keywordText' and a button id 'addTerm'
+// $("#addTerm").on("click",function(event){
 //   event.preventDefault();
-//   userLocation = $("#startText").val();
-//   // window.open("tempSecondPage.html","_self");
-//   // $("#currentLoc").html('Currently Searching:'+userLocation);
+//   searchTerm = $("#keywordText").val();
+//   oArgs.keywords = searchTerm;
 //   getEventfulEvents();
+// }
+
+//enhancement -- 'get next 25 events' button
+$(document).on("click","#getNext",function(){
+  resultItems=[]; //clear resultItems array
+  $("#cardHolder").empty(); //clear cardHolder section
+  pageNumber++;//increase pageNumber 
+  console.log("new page#: ",pageNumber);
+  oArgs.page_number=pageNumber; //set new page number in query arguments
+  console.log("new oargs: ",oArgs);
+  getEventfulEvents();
+
+});
+
+function getNext(){
+  resultItems=[]; //clear resultItems array
+  $("#cardHolder").clear(); //clear cardHolder section
+  pageNumber++;//increase pageNumber 
+  oArgs.page_number=pageNumber; //set new page number in query arguments
+  getEventfulEvents(); //get new events
+}
 
 
-// })
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~database stuff ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
   // Initialize Firebase
   var config = {
@@ -295,5 +342,15 @@ $("#login-btn").on("click", function(event) {
     $("#login-pin").val("");
     $("#loginError").text("");
    
- 
+ //double click the basic event card to remove it (already deprecated with 'not interested link' lol)
+
+// $(document).on("dblclick",".eventCard",function(){
+  
+//   var id=$(this).attr("id");
+//   console.log("removing ID: ",id);
+//   var itemIndex = findInArray(resultItems,"id",id);
+//       resultItems.splice(itemIndex,1);//remove item from resultItems array
+//       $(this).remove();
+//   console.log("new resultItems count",resultItems.length);
+// });
   
