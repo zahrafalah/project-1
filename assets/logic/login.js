@@ -337,6 +337,69 @@ $("#login-btn").on("click", function(event) {
           //NEXT--DO SOMETHING - QUERY THE DATABASE AND RETURN THE USER'S SAVED ITEMS 
           eventUserName = userName;
           //FOR EACH ITEM IN RESULT SET, APPEND AN 'EVENT INFO CARD' object TO THE INTO THE SAVED ITEMS SECTION
+          //1. Retrieve the event info
+          
+          var refEvent = database.ref("/users/" + eventUserName + "/savedEvents/");
+          refEvent.on("value", function(snapshot) {
+            console.log("The array length is " + snapshot.val().length);
+            var cardsArray = snapshot.val();
+            console.log(cardsArray);
+
+            for (var i=0;i<cardsArray.length;i++){
+              var resultItem = cardsArray[i]; 
+          
+              
+          
+              if(resultItem.description==null){      //error handling for NULL event description - just makes the 
+                var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
+              }
+              else var eventDesc=resultItem.description;
+          
+              var eventItem = {
+                id:resultItem.id,
+                title:resultItem.title,
+                address: '',
+                //address:resultItem.venueAddress,
+                city:resultItem.city_name,
+                state:resultItem.region_abbr,
+                zip:resultItem.postal_code,
+                startTime:resultItem.start_time,
+                venue:resultItem.venue_name,
+                venueURL:resultItem.venue_url,
+               // imageURL:resultItem.image.medium.url,
+                description:eventDesc,
+                latitude : resultItem.latitude,
+                longitude : resultItem.longitude
+              };
+              resultItems.push(eventItem); //push item into temp array
+              console.log(eventItem);
+              console.log("User Name is " + eventUserName);
+              var newCard = $("<div>");
+              var removeLink = $("<a/>");
+              removeLink.attr("class","removeLink");
+              removeLink.text("Not Interested");
+              var saveEventLink = $("<a/>");
+              saveEventLink.attr("class","saveLink");
+              saveEventLink.text("Save this one!");
+              newCard.attr("class","eventCard col-md-8");
+              newCard.attr("id",eventItem.id);//unique id we can use to reference this object
+              newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>")
+              newCard.append(removeLink);
+              newCard.append("<br>");
+              newCard.append(saveEventLink);
+              
+              $("#cardHolder").append(newCard);
+               
+             
+          
+            }//end for loop
+          
+
+
+     
+          }, function (error) {
+            console.log("Error: " + error.code);
+          });
           
            
         }
