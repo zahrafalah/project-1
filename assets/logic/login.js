@@ -65,7 +65,7 @@ function makeEventCards(){
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
       startTime:resultItem.start_time,
-      daysUntil: moment().diff(moment(resultItem.startTime), "days"),
+      daysUntil: moment().diff(moment(resultItem.startTime), "days") === 0? "Today": moment().diff(moment(resultItem.startTime), "days"),
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
@@ -386,7 +386,7 @@ $("#login-btn").on("click", function(event) {
                 state:resultItem.region_abbr,
                 zip:resultItem.postal_code,
                 startTime:resultItem.start_time,
-                daysUntil: moment().diff(moment(resultItem.startTime), "days"),
+                daysUntil: moment().diff(moment(resultItem.startTime), "days") === 0? "Today": moment().diff(moment(resultItem.startTime), "days"),
 
                 venue:resultItem.venue_name,
                 venueURL:resultItem.venue_url,
