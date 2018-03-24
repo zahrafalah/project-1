@@ -51,7 +51,10 @@ function makeEventCards(){
       var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
     }
     else var eventDesc=resultItem.description;
-
+     
+      if (eventDesc.length>=151)
+      {var desc_preview=eventDesc.substring(0,151)+"...";} //if the description is long, grab the first 150 characters of the description
+      else {var desc_preview= eventDesc }; //otherwise, just show the description
     var eventItem = {
       id:resultItem.id,
       title:resultItem.title,
@@ -64,6 +67,7 @@ function makeEventCards(){
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
       description:eventDesc,
+      descPreview:desc_preview,
       latitude : resultItem.latitude,
       longitude : resultItem.longitude
     };
@@ -78,7 +82,7 @@ function makeEventCards(){
     saveEventLink.text("Save this one!");
     newCard.attr("class","eventCard col-md-8");
     newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>")
+    newCard.html("<br>-----------------------------------------------<br><h5>"+eventItem.title+"</h5><br> Event description:"+eventItem.descPreview+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>")
     newCard.append(removeLink);
     newCard.append("<br>");
     newCard.append(saveEventLink);
