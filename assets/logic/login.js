@@ -88,8 +88,27 @@ function makeEventCards(){
     newCard.append(removeLink);
     newCard.append("<br>");
     newCard.append(saveEventLink);
+
     
+    var gMap = $('<div>');
+    gMap.addClass("mapCanvas");
+
+     
+    var gElementID = "m" + eventItem.id;
+    gLongitude = parseFloat(eventItem.longitude);
+    gLatitude = parseFloat(eventItem.latitude);
+    gMap.attr("id", gElementID);
+    $("#cardHolder").append(gMap);
+
+    console.log(gLatitude, gLongitude, gElementID);
+    initMap(gElementID, gLatitude, gLongitude);
+    newCard.append(gMap);
     $("#cardHolder").append(newCard);
+
+
+
+    
+   
      
    
 
@@ -390,10 +409,23 @@ $("#login-btn").on("click", function(event) {
               newCard.append("<br>");
               newCard.append(saveEventLink);
               
+              
+              
+              var gMap = $('<div>');
+              gMap.addClass("mapCanvas");
+
+               
+              var gElementID = "m" + eventItem.id;
+              gLongitude = parseFloat(eventItem.longitude);
+              gLatitude = parseFloat(eventItem.latitude);
+              gMap.attr("id", gElementID);
+              $("#cardHolder").append(gMap);
+
+              console.log(gLatitude, gLongitude, gElementID);
+              initMap(gElementID, gLatitude, gLongitude);
+              newCard.append(gMap);
               $("#cardHolder").append(newCard);
                
-             
-          
             }//end for loop
           
 
@@ -455,4 +487,32 @@ $("#login-btn").on("click", function(event) {
 //       $(this).remove();
 //   console.log("new resultItems count",resultItems.length);
 // });
-  
+ 
+function initMap() {
+  // Create a map object and specify the DOM element for display.
+  alert('initialCall');
+  var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+    center: {lat: -34.397, lng: 150.644},
+    scrollwheel: false,
+    zoom: 8
+  });
+}
+
+
+function initMap(elementID, gLatitude, gLongitude) {
+  // Create a map object and specify the DOM element for display.
+  alert(elementID);
+  var map = new google.maps.Map(document.getElementById(elementID), {
+    center: {lat: gLatitude, lng: gLongitude},
+    scrollwheel: false,
+    zoom: 12
+  });
+
+  var marker = new google.maps.Marker({
+    position: {lat: gLatitude, lng: gLongitude},
+    map: map,
+    title: 'Venue Name?'
+  });
+
+
+}

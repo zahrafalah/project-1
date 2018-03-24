@@ -1,3 +1,16 @@
 .eventCard{
-    border: 10px solid red;
+     
+}
+
+#mapCanvas{
+    width : 100px;
+    height: 100px;
+}
+
+.mapCanvas{
+    width : 400px;
+    height: 400px;
+    float:right;
+    top: 0;
+     
 }
