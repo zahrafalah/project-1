@@ -12,6 +12,8 @@ var resultSet=[];
 var resultItems=[];
 var pageNumber = 1;
 
+var eventUserName;
+
 var oArgs = {
   app_key: clientID,
   category: "family_fun_kids",
@@ -47,6 +49,8 @@ function makeEventCards(){
   for (var i=0;i<resultSet.events.event.length;i++){
     var resultItem = resultSet.events.event[i]; 
 
+    
+
     if(resultItem.description==null){      //error handling for NULL event description - just makes the 
       var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
     }
@@ -55,7 +59,8 @@ function makeEventCards(){
     var eventItem = {
       id:resultItem.id,
       title:resultItem.title,
-      address:resultItem.venueAddress,
+      address: '',
+      //address:resultItem.venueAddress,
       city:resultItem.city_name,
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
@@ -69,6 +74,7 @@ function makeEventCards(){
     };
     resultItems.push(eventItem); //push item into temp array
     console.log(eventItem);
+    console.log("User Name is " + eventUserName);
     var newCard = $("<div>");
     var removeLink = $("<a/>");
     removeLink.attr("class","removeLink");
@@ -84,6 +90,8 @@ function makeEventCards(){
     newCard.append(saveEventLink);
     
     $("#cardHolder").append(newCard);
+     
+   
 
   }//end for loop
   // add 'next 25 button'
@@ -112,6 +120,8 @@ $(document).on("click",".removeLink",function(){
       resultItems.splice(itemIndex,1);//remove item from resultItems array
       $(this).parent().remove();
   console.log("new resultItems count",resultItems.length);
+
+
 });
 
 
@@ -129,6 +139,12 @@ $(document).on("click",".saveLink",function(){
   
   //move $(this).parent() to 'saved items' section (top right)
   console.log("new resultItems count",resultItems.length);
+
+   // Push the updated events to the database
+    //Note we are rewriting each time to resolve index issue
+    console.log(resultItems);
+    database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
+
 });
 
 
@@ -195,6 +211,7 @@ function getNext(){
 //~~~~~~~~~~~~~~~~~~~~~~~~~database stuff ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
   // Initialize Firebase
+  /*
   var config = {
     apiKey: "AIzaSyAqqFDGVm6pNyj_skReV42OfQEXyG3G5iM",
     authDomain: "logintest-2d079.firebaseapp.com",
@@ -206,7 +223,21 @@ function getNext(){
   firebase.initializeApp(config);
 
   var database = firebase.database();
+*/
 
+
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyB_wkzEKhJEretzMVr731-Lu75fwAfKv7E",
+    authDomain: "project-1-635d0.firebaseapp.com",
+    databaseURL: "https://project-1-635d0.firebaseio.com",
+    projectId: "project-1-635d0",
+    storageBucket: "",
+    messagingSenderId: "89864333225"
+  };
+  firebase.initializeApp(config);
+
+  var database = firebase.database();
 console.log("db connection successful");
 
 //add new user to the database//
@@ -252,6 +283,7 @@ $("#add-user-btn").on("click", function(event) {
       database.ref("users/" + userName).set(newUser);
   
       //DO SOMETHING ELSE - REPLACE THE LOGIN FORM WITH THE USER'S SAVED ITEMS OR WHATEVER
+      
     }
   });
   
@@ -261,6 +293,7 @@ $("#add-user-btn").on("click", function(event) {
   console.log(newUser.pinCode);
   console.log(addDate);
   
+  eventUserName = newUser.userName;
 
   // Alert
  // alert("Welcome to Unborable!");
@@ -299,8 +332,10 @@ $("#login-btn").on("click", function(event) {
           $("#loginError").text("That's a match! Welcome back.");
           loginState="loggedIn";
     //      $("#loginError").text("");
-          console.log("usernm/userstate: " + userName, loginState)
+          console.log("usernm/userstate: " + userName, loginState);
+
           //NEXT--DO SOMETHING - QUERY THE DATABASE AND RETURN THE USER'S SAVED ITEMS 
+          eventUserName = userName;
           //FOR EACH ITEM IN RESULT SET, APPEND AN 'EVENT INFO CARD' object TO THE INTO THE SAVED ITEMS SECTION
           
            
