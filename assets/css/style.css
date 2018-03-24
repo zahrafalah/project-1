@@ -1,0 +1,12 @@
+#mapCanvas{
+    width : 100px;
+    height: 100px;
+}
+
+.mapCanvas{
+    width : 200px;
+    height: 200px;
+    float:right;
+    top: 0;
+     
+}
