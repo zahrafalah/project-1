@@ -12,6 +12,8 @@ var resultSet=[];
 var resultItems=[];
 var pageNumber = 1;
 
+var eventUserName;
+
 var oArgs = {
   app_key: clientID,
   category: "family_fun_kids",
@@ -47,6 +49,8 @@ function makeEventCards(){
   for (var i=0;i<resultSet.events.event.length;i++){
     var resultItem = resultSet.events.event[i]; 
 
+    
+
     if(resultItem.description==null){      //error handling for NULL event description - just makes the 
       var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
     }
@@ -55,11 +59,13 @@ function makeEventCards(){
     var eventItem = {
       id:resultItem.id,
       title:resultItem.title,
-      address:resultItem.venueAddress,
+      address: '',
+      //address:resultItem.venueAddress,
       city:resultItem.city_name,
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
       startTime:resultItem.start_time,
+      daysUntil: moment().diff(moment(resultItem.startTime), "days"),
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
@@ -69,6 +75,7 @@ function makeEventCards(){
     };
     resultItems.push(eventItem); //push item into temp array
     console.log(eventItem);
+    console.log("User Name is " + eventUserName);
     var newCard = $("<div>");
     var removeLink = $("<a/>");
     removeLink.attr("class","removeLink");
@@ -78,12 +85,33 @@ function makeEventCards(){
     saveEventLink.text("Save this one!");
     newCard.attr("class","eventCard col-md-8");
     newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>")
+    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>" + "<br> Days from Now: "+eventItem.daysUntil+"<br>")
     newCard.append(removeLink);
     newCard.append("<br>");
     newCard.append(saveEventLink);
+
     
+    var gMap = $('<div>');
+    gMap.addClass("mapCanvas");
+
+     
+    var gElementID = "m" + eventItem.id;
+    gLongitude = parseFloat(eventItem.longitude);
+    gLatitude = parseFloat(eventItem.latitude);
+    gMap.attr("id", gElementID);
+    $("#cardHolder").append(gMap);
+
+    console.log(gLatitude, gLongitude, gElementID);
+    initMap(gElementID, gLatitude, gLongitude);
+    newCard.append(gMap);
     $("#cardHolder").append(newCard);
+
+
+
+    
+   
+     
+   
 
   }//end for loop
   // add 'next 25 button'
@@ -114,6 +142,8 @@ $(document).on("click",".removeLink",function(){
       resultItems.splice(itemIndex,1);//remove item from resultItems array
       $(this).parent().remove();
   console.log("new resultItems count",resultItems.length);
+
+
 });
 
 
@@ -125,10 +155,18 @@ $(document).on("click",".saveLink",function(){
   var id=$(this).parent().attr("id");
   console.log("saving ID: ",id);
   var itemIndex = findInArray(resultItems,"id",id);
-  var saveObject = resultItems[i];
+  //var saveObject = resultItems[i];
   //push saveObject to users/saveditems
+
+  
   //move $(this).parent() to 'saved items' section (top right)
   console.log("new resultItems count",resultItems.length);
+
+   // Push the updated events to the database
+    //Note we are rewriting each time to resolve index issue
+    console.log(resultItems);
+    database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
+
 });
 
 
@@ -195,6 +233,7 @@ function getNext(){
 //~~~~~~~~~~~~~~~~~~~~~~~~~database stuff ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
   // Initialize Firebase
+  /*
   var config = {
     apiKey: "AIzaSyAqqFDGVm6pNyj_skReV42OfQEXyG3G5iM",
     authDomain: "logintest-2d079.firebaseapp.com",
@@ -206,7 +245,21 @@ function getNext(){
   firebase.initializeApp(config);
 
   var database = firebase.database();
+*/
 
+
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyB_wkzEKhJEretzMVr731-Lu75fwAfKv7E",
+    authDomain: "project-1-635d0.firebaseapp.com",
+    databaseURL: "https://project-1-635d0.firebaseio.com",
+    projectId: "project-1-635d0",
+    storageBucket: "",
+    messagingSenderId: "89864333225"
+  };
+  firebase.initializeApp(config);
+
+  var database = firebase.database();
 console.log("db connection successful");
 
 //add new user to the database//
@@ -252,6 +305,7 @@ $("#add-user-btn").on("click", function(event) {
       database.ref("users/" + userName).set(newUser);
   
       //DO SOMETHING ELSE - REPLACE THE LOGIN FORM WITH THE USER'S SAVED ITEMS OR WHATEVER
+      
     }
   });
   
@@ -261,6 +315,7 @@ $("#add-user-btn").on("click", function(event) {
   console.log(newUser.pinCode);
   console.log(addDate);
   
+  eventUserName = newUser.userName;
 
   // Alert
  // alert("Welcome to Unborable!");
@@ -299,9 +354,89 @@ $("#login-btn").on("click", function(event) {
           $("#loginError").text("That's a match! Welcome back.");
           loginState="loggedIn";
     //      $("#loginError").text("");
-          console.log("usernm/userstate: " + userName, loginState)
+          console.log("usernm/userstate: " + userName, loginState);
+
           //NEXT--DO SOMETHING - QUERY THE DATABASE AND RETURN THE USER'S SAVED ITEMS 
+          eventUserName = userName;
           //FOR EACH ITEM IN RESULT SET, APPEND AN 'EVENT INFO CARD' object TO THE INTO THE SAVED ITEMS SECTION
+          //1. Retrieve the event info
+          
+          var refEvent = database.ref("/users/" + eventUserName + "/savedEvents/");
+          refEvent.on("value", function(snapshot) {
+            console.log("The array length is " + snapshot.val().length);
+            var cardsArray = snapshot.val();
+            console.log(cardsArray);
+
+            for (var i=0;i<cardsArray.length;i++){
+              var resultItem = cardsArray[i]; 
+          
+              
+          
+              if(resultItem.description==null){      //error handling for NULL event description - just makes the 
+                var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
+              }
+              else var eventDesc=resultItem.description;
+          
+              var eventItem = {
+                id:resultItem.id,
+                title:resultItem.title,
+                address: '',
+                //address:resultItem.venueAddress,
+                city:resultItem.city_name,
+                state:resultItem.region_abbr,
+                zip:resultItem.postal_code,
+                startTime:resultItem.start_time,
+                daysUntil: moment().diff(moment(resultItem.startTime), "days"),
+
+                venue:resultItem.venue_name,
+                venueURL:resultItem.venue_url,
+               // imageURL:resultItem.image.medium.url,
+                description:eventDesc,
+                latitude : resultItem.latitude,
+                longitude : resultItem.longitude
+              };
+              resultItems.push(eventItem); //push item into temp array
+              console.log(eventItem);
+              console.log("User Name is " + eventUserName);
+              var newCard = $("<div>");
+              var removeLink = $("<a/>");
+              removeLink.attr("class","removeLink");
+              removeLink.text("Not Interested");
+              var saveEventLink = $("<a/>");
+              saveEventLink.attr("class","saveLink");
+              saveEventLink.text("Save this one!");
+              newCard.attr("class","eventCard col-md-8");
+              newCard.attr("id",eventItem.id);//unique id we can use to reference this object
+              newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>"  + "<br> Days from Now: "+eventItem.daysUntil+"<br>")
+              newCard.append(removeLink);
+              newCard.append("<br>");
+              newCard.append(saveEventLink);
+              
+              
+              
+              var gMap = $('<div>');
+              gMap.addClass("mapCanvas");
+
+               
+              var gElementID = "m" + eventItem.id;
+              gLongitude = parseFloat(eventItem.longitude);
+              gLatitude = parseFloat(eventItem.latitude);
+              gMap.attr("id", gElementID);
+              $("#cardHolder").append(gMap);
+
+              console.log(gLatitude, gLongitude, gElementID);
+              initMap(gElementID, gLatitude, gLongitude);
+              newCard.append(gMap);
+              $("#cardHolder").append(newCard);
+               
+            }//end for loop
+          
+
+
+     
+          }, function (error) {
+            console.log("Error: " + error.code);
+          });
           
            
         }
@@ -355,4 +490,32 @@ $("#login-btn").on("click", function(event) {
 //       $(this).remove();
 //   console.log("new resultItems count",resultItems.length);
 // });
-  
+ 
+function initMap() {
+  // Create a map object and specify the DOM element for display.
+  alert('initialCall');
+  var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+    center: {lat: -34.397, lng: 150.644},
+    scrollwheel: false,
+    zoom: 8
+  });
+}
+
+
+function initMap(elementID, gLatitude, gLongitude) {
+  // Create a map object and specify the DOM element for display.
+   
+  var map = new google.maps.Map(document.getElementById(elementID), {
+    center: {lat: gLatitude, lng: gLongitude},
+    scrollwheel: false,
+    zoom: 15
+  });
+
+  var marker = new google.maps.Marker({
+    position: {lat: gLatitude, lng: gLongitude},
+    map: map,
+    title: 'Venue Name?'
+  });
+
+
+}
