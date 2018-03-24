@@ -65,6 +65,7 @@ function makeEventCards(){
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
       startTime:resultItem.start_time,
+      daysUntil: moment().diff(moment(resultItem.startTime), "days"),
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
@@ -501,11 +502,11 @@ function initMap() {
 
 function initMap(elementID, gLatitude, gLongitude) {
   // Create a map object and specify the DOM element for display.
-  alert(elementID);
+   
   var map = new google.maps.Map(document.getElementById(elementID), {
     center: {lat: gLatitude, lng: gLongitude},
     scrollwheel: false,
-    zoom: 12
+    zoom: 15
   });
 
   var marker = new google.maps.Marker({
