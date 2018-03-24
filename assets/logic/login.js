@@ -123,8 +123,10 @@ $(document).on("click",".saveLink",function(){
   var id=$(this).parent().attr("id");
   console.log("saving ID: ",id);
   var itemIndex = findInArray(resultItems,"id",id);
-  var saveObject = resultItems[i];
+  //var saveObject = resultItems[i];
   //push saveObject to users/saveditems
+
+  
   //move $(this).parent() to 'saved items' section (top right)
   console.log("new resultItems count",resultItems.length);
 });
