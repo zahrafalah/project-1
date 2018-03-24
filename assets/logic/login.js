@@ -84,7 +84,7 @@ function makeEventCards(){
     saveEventLink.text("Save this one!");
     newCard.attr("class","eventCard col-md-8");
     newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>")
+    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>" + "<br> Days from Now: "+eventItem.daysUntil+"<br>")
     newCard.append(removeLink);
     newCard.append("<br>");
     newCard.append(saveEventLink);
@@ -364,6 +364,8 @@ $("#login-btn").on("click", function(event) {
                 state:resultItem.region_abbr,
                 zip:resultItem.postal_code,
                 startTime:resultItem.start_time,
+                daysUntil: moment().diff(moment(resultItem.startTime), "days"),
+
                 venue:resultItem.venue_name,
                 venueURL:resultItem.venue_url,
                // imageURL:resultItem.image.medium.url,
@@ -383,7 +385,7 @@ $("#login-btn").on("click", function(event) {
               saveEventLink.text("Save this one!");
               newCard.attr("class","eventCard col-md-8");
               newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-              newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>")
+              newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>"  + "<br> Days from Now: "+eventItem.daysUntil+"<br>")
               newCard.append(removeLink);
               newCard.append("<br>");
               newCard.append(saveEventLink);
