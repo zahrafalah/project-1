@@ -2,6 +2,16 @@
     height: 531px;
     width: 1423px;    
 }
+
+#firstSearch {
+    position:absolute;
+    left:45%;
+}
+.content {
+    height:500px;
+    text-align:center;
+    padding-top:300px;
+}
 body {
     margin: 0;    
     font-family: Arial;
