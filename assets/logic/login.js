@@ -265,6 +265,7 @@ function removeMe(element)
 $("#searchButton").on("click",function(event){
   
   event.preventDefault();
+  window.location.hash = "searchContainer";
   userLocation = $("#inputSearch").val().toString();
   console.log(userLocation);
   getEventfulEvents();//
