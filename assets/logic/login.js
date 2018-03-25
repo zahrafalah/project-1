@@ -70,7 +70,7 @@ function makeEventCards(eventSet){
     {var desc_preview=eventDesc.substring(0,151)+"...";} //if the description is long, grab the first 150 characters of the description
     else {var desc_preview= eventDesc }; //otherwise, just show the description
     var eventItem = {
-      id:resultItem.id,
+      id:resultItem.id.split('@').join(''),
       title:resultItem.title,
       address:resultItem.venue_address,
       city:resultItem.city_name,
