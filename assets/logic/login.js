@@ -83,7 +83,7 @@ function makeEventCards(){
       zip:resultItem.postal_code,
       startTime:startsAt,
       startDate:startDate,
-      daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": moment().diff(moment(resultItem.start_time), "days"),
+      daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": Math.abs(moment().diff(moment(resultItem.start_time), "days")),
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
@@ -405,7 +405,7 @@ $("#login-btn").on("click", function(event) {
                 state:resultItem.region_abbr,
                 zip:resultItem.postal_code,
                 startTime:resultItem.start_time,
-                daysUntil: moment().diff(moment(resultItem.startTime), "days"),
+                daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": Math.abs(moment().diff(moment(resultItem.start_time), "days")),
 
                 venue:resultItem.venue_name,
                 venueURL:resultItem.venue_url,
