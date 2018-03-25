@@ -40,6 +40,16 @@ function getEventfulEvents()
   });
 }
 
+//function to expand the description preview (seeMore class) if the user clicks on it
+
+$(document).on("click",".seeMore",function(){
+  var targetEventID=$(this).parent().attr("id");
+  var targetIndex=findInArray(resultItems,"id",targetEventID);
+  var fullDescription = resultItems[targetIndex].description;
+  $(this).html(fullDescription);
+});
+
+
 function makeEventCards(){
   console.log("made it to make event cards");
   console.log(resultSet.events.event[0]);
@@ -49,12 +59,19 @@ function makeEventCards(){
   for (var i=0;i<resultSet.events.event.length;i++){
     var resultItem = resultSet.events.event[i]; 
 
-    
+    var startDate = moment(resultItem.start_time).format("ddd MM/DD/YYYY");
+    var startsAt = moment(resultItem.start_time).format("h:mm A");
 
     if(resultItem.description==null){      //error handling for NULL event description - just makes the 
       var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
     }
     else var eventDesc=resultItem.description;
+
+    if (eventDesc.length>=151)
+    {var desc_preview=eventDesc.substring(0,151)+"...";} //if the description is long, grab the first 150 characters of the description
+    else {var desc_preview= eventDesc }; //otherwise, just show the description
+
+
 
     var eventItem = {
       id:resultItem.id,
@@ -64,12 +81,14 @@ function makeEventCards(){
       city:resultItem.city_name,
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
-      startTime:resultItem.start_time,
-      daysUntil: moment().diff(moment(resultItem.startTime), "days"),
+      startTime:startsAt,
+      startDate:startDate,
+      daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": moment().diff(moment(resultItem.start_time), "days"),
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
       description:eventDesc,
+      descriptionPreview:desc_preview,
       latitude : resultItem.latitude,
       longitude : resultItem.longitude
     };
@@ -85,7 +104,7 @@ function makeEventCards(){
     saveEventLink.text("Save this one!");
     newCard.attr("class","eventCard col-md-8");
     newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>" + "<br> Days from Now: "+eventItem.daysUntil+"<br>")
+    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br>Event description:<span class='seeMore' title='click to see more'>"+eventItem.descriptionPreview+"</span><br> Location: "+eventItem.city+", "+eventItem.state+"<br> Date & Time: "+eventItem.startDate+"  "+eventItem.startTime+"<br>" + "<br> Days from Now "+eventItem.daysUntil+"<br>")
     newCard.append(removeLink);
     newCard.append("<br>");
     newCard.append(saveEventLink);
