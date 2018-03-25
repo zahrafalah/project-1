@@ -54,6 +54,13 @@ function makeEventCards(eventSet){
     var startDate = moment(resultItem.start_time).format("ddd MM/DD/YYYY");
     var startsAt = moment(resultItem.start_time).format("h:mm A");
 
+    if (resultItem.image.medium.url==null){
+      var imageURL="./assets/images/noimg.png";
+      }
+    else {imageURL=resultItem.image.medium.url;};
+
+
+
     if(resultItem.description==null){      //error handling for NULL event description - just makes the 
       var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
     }
@@ -76,7 +83,7 @@ function makeEventCards(eventSet){
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
       description:resultItem.eventDesc,
-      descriptionPreview:resultItem.desc_preview,
+      descriptionPreview:desc_preview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
@@ -101,13 +108,13 @@ function makeEventCards(eventSet){
     var cardDivContainer = $("<div>");
     cardDivContainer.addClass("col-md-7");
     var cardBody = $("<div>");
-    cardBody.addClass ("card-body");
-    var h5 = $("<h5>");
+    cardBody.addClass ("card-body col-md-12");
+    var h5 = $("<h3>");
     h5.addClass("card-title");
     h5.text(eventItem.title);
     var p = $("<p>");
     p.addClass("card-text");
-    p.text(eventItem.eventDesc);
+    p.html(eventItem.descriptionPreview);
     
     var aCard = $("<a>"); 
     aCard.addClass("card-link");
@@ -116,8 +123,8 @@ function makeEventCards(eventSet){
     
     var divAddr = $("<div>"); 
     divAddr.attr("id", "m"+eventItem.eventID);
-    divAddr.addClass("gmap");
-    divAddr.html(eventItem.address + "<br/>" + eventItem.city + " , " + eventItem.state);
+    divAddr.addClass("gmap col-md-12");
+    divAddr.html(eventItem.city + " , " + eventItem.state);
     divAddr.data("data-lng", eventItem.longitude);
     divAddr.data("data-lat", eventItem.latitude);
     divAddr.data("data-addr", eventItem.address);
@@ -140,6 +147,7 @@ function makeEventCards(eventSet){
     iconA.addClass("coverr-nav-item");
     iconA.css("text-decoration", "none");
     iconA.attr("href", "#coverrs");
+    iconA.attr("title","Save This!");
     var iconH1 = $("<h1>");
     var iconI = $("<i>");
     iconI.addClass("fas");
@@ -147,6 +155,7 @@ function makeEventCards(eventSet){
 
     var iconB = $("<a>");
     iconB.attr("id", "b" + eventItem.id );
+    iconB.attr("title","Not Interested");
     iconB.data("data-parentid", eventItem.id);
     iconB.addClass("removeLink");
     iconB.addClass("coverr-nav-item");
@@ -377,7 +386,13 @@ $("#add-user-btn").on("click", function(event) {
       $("#pin-input").val("");
     }
     else {
+      //if we are going to add a user, hide the signin form, show
+      //the favorites div and put a welcome message
       // Upload new user record to the database
+      $("#signinForm").hide();
+      $("#favoriteHolder").show();
+      $("#favoriteHolder").html("Welcome to Unborable! You can now click the Star on any item to save it.")
+        
       database.ref("users/" + userName).set(newUser);
   
       //DO SOMETHING ELSE - REPLACE THE LOGIN FORM WITH THE USER'S SAVED ITEMS OR WHATEVER
