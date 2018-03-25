@@ -391,7 +391,7 @@ $("#add-user-btn").on("click", function(event) {
       // Upload new user record to the database
       $("#signinForm").hide();
       $("#favoriteHolder").show();
-      $("#favoriteHolder").html("Welcome to Unborable! You can now click the Star on any item to save it.")
+      // $("#favoriteHolder").html("Welcome to Unborable! You can now click the Star on any item to save it.")
         
       database.ref("users/" + userName).set(newUser);
   
