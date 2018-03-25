@@ -24,14 +24,12 @@ var oArgs = {
   sort_order: "popularity"
 }
 
-
-
 function getEventfulEvents(){
   oArgs.where=userLocation; //set location for query arguments
   EVDB.API.call("/events/search", oArgs, function(results) {
   // Note: this relies on the custom toString() methods below
   resultSet = results;
-  makeEventCards();
+  makeEventCards(resultSet);
   });
 }
 
@@ -44,14 +42,14 @@ $(document).on("click",".seeMore",function(){
   $(this).html(fullDescription);
 });
 
-function makeEventCards(){
+function makeEventCards(eventSet){
   console.log("made it to make event cards");
-  console.log(resultSet.events.event[0]);
+  console.log(eventSet.events.event[0]);
   //for each event item in the result set, make an item that we can use and push it into a temporary array
   //called resultItems. we can then use these items to create the cards, push to the user's saved items, etc
   //we can reference the item in the array by the unique 'id' value
-  for (var i=0;i<resultSet.events.event.length;i++){
-    var resultItem = resultSet.events.event[i]; 
+  for (var i=0;i<eventSet.events.event.length;i++){
+    var resultItem = eventSet.events.event[i]; 
 
     var startDate = moment(resultItem.start_time).format("ddd MM/DD/YYYY");
     var startsAt = moment(resultItem.start_time).format("h:mm A");
@@ -86,6 +84,7 @@ function makeEventCards(){
 
     var newCard = $("<div>");
     newCard.addClass("card w-90");
+    newCard.attr("id", eventItem.id);
     
     var newRow = $("<div>");
     newRow.addClass("row");
@@ -136,19 +135,33 @@ function makeEventCards(){
     iconDiv.addClass("icon");
     var iconA = $("<a>");
     iconA.attr("id", "a" + eventItem.id );
+    iconA.data("data-parentid", eventItem.id);
     iconA.addClass("saveLink");
     iconA.addClass("coverr-nav-item");
     iconA.css("text-decoration", "none");
     iconA.attr("href", "#coverrs");
     var iconH1 = $("<h1>");
-    //iconH1.addClass("text-white");
     var iconI = $("<i>");
     iconI.addClass("fas");
     iconI.addClass("fa-star");
 
+    var iconB = $("<a>");
+    iconB.attr("id", "b" + eventItem.id );
+    iconB.data("data-parentid", eventItem.id);
+    iconB.addClass("removeLink");
+    iconB.addClass("coverr-nav-item");
+    iconB.css("text-decoration", "none");
+    iconB.attr("href", "#coverrs");
+    var iconBH1 = $("<h1>");
+    var iconBI = $("<i>");
+    iconBI.addClass("fas");
+    iconBI.addClass("fa-ban");
     iconH1.append(iconI);
     iconA.append(iconH1);
     iconDiv.append(iconA);
+    iconBH1.append(iconBI);
+    iconB.append(iconBH1);
+    iconDiv.append(iconB);
     iconDivContainer.append(iconDiv);
 
     newRow.append(imgDivContainer);
@@ -157,44 +170,7 @@ function makeEventCards(){
 
     newCard.append(newRow);
 
-    /*
-    var newCard = $("<div>");
-    var removeLink = $("<a/>");
-    removeLink.attr("class","removeLink");
-    removeLink.text("Not Interested");
-    var saveEventLink = $("<a/>");
-    saveEventLink.attr("class","saveLink");
-    saveEventLink.text("Save this one!");
-    newCard.attr("class","eventCard col-md-8");
-    newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-    newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br>Event description:<span class='seeMore' title='click to see more'>"+eventItem.descriptionPreview+"</span><br> Location: "+eventItem.city+", "+eventItem.state+"<br> Date & Time: "+eventItem.startDate+"  "+eventItem.startTime+"<br>" + "<br> Days from Now "+eventItem.daysUntil+"<br>")
-    newCard.append(removeLink);
-    newCard.append("<br>");
-    newCard.append(saveEventLink);
-
-    
-    var gMap = $('<div>');
-    gMap.addClass("mapCanvas");
-
-     
-    var gElementID = "m" + eventItem.id;
-    gLongitude = parseFloat(eventItem.longitude);
-    gLatitude = parseFloat(eventItem.latitude);
-    gMap.attr("id", gElementID);
-    $("#cardHolder").append(gMap);
-
-    console.log(gLatitude, gLongitude, gElementID);
-    initMap(gLatitude, gLongitude);
-    newCard.append(gMap);
-    */
-    $("#cardHolder").append(newCard);
-
-
-
-    
-   
-     
-   
+        $("#cardHolder").append(newCard);
 
   }//end for loop
   // add 'next 25 button'
@@ -209,25 +185,34 @@ function makeEventCards(){
 
 }
 
-
-
-
-
-
-
 //make the 'not interested' link do something
 
-$(document).on("click",".removeLink",function(){
+$('#cardHolder').on("click",".removeLink",function(){
+   
+  var id=$(this).data("data-parentid");
   
-  var id=$(this).parent().attr("id");
-  console.log("removing ID: ",id);
+   
+
   var itemIndex = findInArray(resultItems,"id",id);
       resultItems.splice(itemIndex,1);//remove item from resultItems array
-      $(this).parent().remove();
+      $("#"+id).remove(); 
   console.log("new resultItems count",resultItems.length);
 
 
 });
+
+
+$('#favoriteHolder').on("click",".removeLink",function(){
+   
+  var id=$(this).data("data-parentid");
+    var itemIndex = findInArray(resultItems,"id",id);
+      resultItems.splice(itemIndex,1);//remove item from resultItems array
+      $("#"+id).remove(); 
+  console.log("new resultItems count",resultItems.length);
+
+
+});
+
 
 
 //bookmark event item
@@ -235,8 +220,11 @@ $(document).on("click",".removeLink",function(){
 $('#cardHolder').on("click",".saveLink",function(){
   //check to see if user is logged in - if not, remindAboutSigningUp()
   //if user is logged in, proceed:
-  alert("hear me");
-  var id=$(this).parent().attr("id");
+   
+  //var id=$(this).parent().attr("id");
+  var id=$(this).data("data-parentid");
+   
+  $("#favoriteHolder").append($('#' + id));
   console.log("saving ID: ",id);
   var itemIndex = findInArray(resultItems,"id",id);
   //var saveObject = resultItems[i];
@@ -245,12 +233,12 @@ $('#cardHolder').on("click",".saveLink",function(){
   
   //move $(this).parent() to 'saved items' section (top right)
   console.log("new resultItems count",resultItems.length);
-
+  
    // Push the updated events to the database
     //Note we are rewriting each time to resolve index issue
     console.log(resultItems);
     database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
-
+    
 });
 
 
@@ -455,77 +443,14 @@ $("#login-btn").on("click", function(event) {
             console.log(cardsArray);
 
             for (var i=0;i<cardsArray.length;i++){
-              var resultItem = cardsArray[i]; 
-          
-              
-          
-              if(resultItem.description==null){      //error handling for NULL event description - just makes the 
-                var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
-              }
-              else var eventDesc=resultItem.description;
-          
-              var eventItem = {
-                id:resultItem.id,
-                title:resultItem.title,
-                address: '',
-                //address:resultItem.venueAddress,
-                city:resultItem.city_name,
-                state:resultItem.region_abbr,
-                zip:resultItem.postal_code,
-                startTime:resultItem.start_time,
-                daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": Math.abs(moment().diff(moment(resultItem.start_time), "days")),
 
-                venue:resultItem.venue_name,
-                venueURL:resultItem.venue_url,
-               // imageURL:resultItem.image.medium.url,
-                description:eventDesc,
-                latitude : resultItem.latitude,
-                longitude : resultItem.longitude
-              };
-              resultItems.push(eventItem); //push item into temp array
-              console.log(eventItem);
-              console.log("User Name is " + eventUserName);
-              var newCard = $("<div>");
-              var removeLink = $("<a/>");
-              removeLink.attr("class","removeLink");
-              removeLink.text("Not Interested");
-              var saveEventLink = $("<a/>");
-              saveEventLink.attr("class","saveLink");
-              saveEventLink.text("Save this one!");
-              newCard.attr("class","eventCard col-md-8");
-              newCard.attr("id",eventItem.id);//unique id we can use to reference this object
-              newCard.html("<br>-----------------------------------------------<br>Event Name:"+eventItem.title+"<br> Event description:"+eventItem.description+"<br> Location: "+eventItem.city+", "+eventItem.state+"<br> Start Time: "+eventItem.startTime+"<br>"  + "<br> Days from Now: "+eventItem.daysUntil+"<br>")
-              newCard.append(removeLink);
-              newCard.append("<br>");
-              newCard.append(saveEventLink);
-              
-              
-              
-              var gMap = $('<div>');
-              gMap.addClass("mapCanvas");
+            makeEventCards(cardsArray);
 
-               
-              var gElementID = "m" + eventItem.id;
-              gLongitude = parseFloat(eventItem.longitude);
-              gLatitude = parseFloat(eventItem.latitude);
-              gMap.attr("id", gElementID);
-              $("#cardHolder").append(gMap);
-
-              console.log(gLatitude, gLongitude, gElementID);
-              initMap(gElementID, gLatitude, gLongitude);
-              newCard.append(gMap);
-              $("#cardHolder").append(newCard);
-               
+             
             }//end for loop
-          
-
-
-     
           }, function (error) {
             console.log("Error: " + error.code);
           });
-          
-           
         }
         else {
              $("#loginError").text("That User ID/PIN combo does not match any in our records. Try again.");
@@ -578,21 +503,12 @@ $("#login-btn").on("click", function(event) {
 //   console.log("new resultItems count",resultItems.length);
 // });
  
-function initMap() {
-  // Create a map object and specify the DOM element for display.
-  alert('initialCall');
-  var map = new google.maps.Map(document.getElementById('mapCanvas'), {
-    center: {lat: -34.397, lng: 150.644},
-    scrollwheel: false,
-    zoom: 8
-  });
-}
-
 
 function initMap(gLatitude, gLongitude, gAddress) {
   // Create a map object and specify the DOM element for display.
   
   var mapTitle = gAddress;
+
   var map = new google.maps.Map(document.getElementById('mapCanvas'), {
     center: {lat: gLatitude, lng: gLongitude},
     scrollwheel: false,
@@ -612,3 +528,10 @@ function initMap(gLatitude, gLongitude, gAddress) {
 $('#cardHolder').on('click','.gmap', function(){
    initMap($(this).data("data-lat"), $(this).data("data-lng"), $(this).data("data-addr"))
 });
+
+
+$('#favoriteHolder').on('click','.gmap', function(){
+   
+  initMap($(this).data("data-lat"), $(this).data("data-lng"), $(this).data("data-addr"))
+});
+
