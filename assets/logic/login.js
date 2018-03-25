@@ -274,7 +274,7 @@ function removeMe(element)
 
 
 $("#searchButton").on("click",function(event){
-  alert("Hear me?");
+  
   event.preventDefault();
   userLocation = $("#inputSearch").val().toString();
   console.log(userLocation);
