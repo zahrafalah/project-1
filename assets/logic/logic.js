@@ -1,1 +1,0 @@
-console.log("consol.log(some shit)")
