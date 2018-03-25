@@ -26,17 +26,12 @@ var oArgs = {
 
 
 
-function getEventfulEvents()
-{
-  console.log("userloc: "+userLocation);
+function getEventfulEvents(){
   oArgs.where=userLocation; //set location for query arguments
   EVDB.API.call("/events/search", oArgs, function(results) {
   // Note: this relies on the custom toString() methods below
-  console.log(results);
-  resultSet=results;
+  resultSet = results;
   makeEventCards();
-  
-  
   });
 }
 
@@ -48,7 +43,6 @@ $(document).on("click",".seeMore",function(){
   var fullDescription = resultItems[targetIndex].description;
   $(this).html(fullDescription);
 });
-
 
 function makeEventCards(){
   console.log("made it to make event cards");
@@ -70,14 +64,10 @@ function makeEventCards(){
     if (eventDesc.length>=151)
     {var desc_preview=eventDesc.substring(0,151)+"...";} //if the description is long, grab the first 150 characters of the description
     else {var desc_preview= eventDesc }; //otherwise, just show the description
-
-
-
     var eventItem = {
       id:resultItem.id,
       title:resultItem.title,
-      address: '',
-      //address:resultItem.venueAddress,
+      address:resultItem.venue_address,
       city:resultItem.city_name,
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
@@ -93,8 +83,6 @@ function makeEventCards(){
       longitude : parseFloat(resultItem.longitude)
     };
     resultItems.push(eventItem); //push item into temp array
-    console.log(eventItem);
-    console.log("User Name is " + eventUserName);
 
     var newCard = $("<div>");
     newCard.addClass("card w-90");
@@ -106,8 +94,9 @@ function makeEventCards(){
     imgDivContainer.addClass("col-md-3");
     var theImage = $("<img>");
     theImage.addClass("card-img");
-    theImage.attr("alt",resultItem.desc_preview);
-    theImage.attr("src",resultItem.imageURL);
+    theImage.attr("alt",eventItem.desc_preview);
+    theImage.attr("src",eventItem.imageURL);
+    theImage.attr("id","s" + eventItem.id);
     imgDivContainer.append(theImage);
 
     var cardDivContainer = $("<div>");
@@ -116,29 +105,43 @@ function makeEventCards(){
     cardBody.addClass ("card-body");
     var h5 = $("<h5>");
     h5.addClass("card-title");
-    h5.text(resultItem.title);
+    h5.text(eventItem.title);
     var p = $("<p>");
     p.addClass("card-text");
-    p.text(resultItem.eventDesc);
-    var aCard = $("<a>");
+    p.text(eventItem.eventDesc);
+    
+    var aCard = $("<a>"); 
     aCard.addClass("card-link");
-    aCard.attr("href",resultItem.venue_url);
-    aCard.text(resultItem.venue_name);
+    aCard.attr("href",eventItem.venue_url);
+    aCard.text(eventItem.venue_name);
+    
+    var divAddr = $("<div>"); 
+    divAddr.attr("id", "m"+eventItem.eventID);
+    divAddr.addClass("gmap");
+    divAddr.html(eventItem.address + "<br/>" + eventItem.city + " , " + eventItem.state);
+    divAddr.data("data-lng", eventItem.longitude);
+    divAddr.data("data-lat", eventItem.latitude);
+    divAddr.data("data-addr", eventItem.address);
+
     cardBody.append(h5);
     cardBody.append(p);
     cardBody.append(aCard);
+    cardBody.append(divAddr);
+     
     cardDivContainer.append(cardBody);
-
+    
     var iconDivContainer = $("<div>");
     iconDivContainer.addClass("col-md-2");
     var iconDiv = $("<div>");
     iconDiv.addClass("icon");
-    var iconA = $("a");
+    var iconA = $("<a>");
+    iconA.attr("id", "a" + eventItem.id );
+    iconA.addClass("saveLink");
     iconA.addClass("coverr-nav-item");
     iconA.css("text-decoration", "none");
     iconA.attr("href", "#coverrs");
     var iconH1 = $("<h1>");
-    iconH1.addClass("text-white");
+    //iconH1.addClass("text-white");
     var iconI = $("<i>");
     iconI.addClass("fas");
     iconI.addClass("fa-star");
@@ -153,9 +156,6 @@ function makeEventCards(){
     newRow.append(iconDivContainer);
 
     newCard.append(newRow);
-
-
-
 
     /*
     var newCard = $("<div>");
@@ -232,9 +232,10 @@ $(document).on("click",".removeLink",function(){
 
 //bookmark event item
 
-$(document).on("click",".saveLink",function(){
+$('#cardHolder').on("click",".saveLink",function(){
   //check to see if user is logged in - if not, remindAboutSigningUp()
   //if user is logged in, proceed:
+  alert("hear me");
   var id=$(this).parent().attr("id");
   console.log("saving ID: ",id);
   var itemIndex = findInArray(resultItems,"id",id);
@@ -588,20 +589,26 @@ function initMap() {
 }
 
 
-function initMap(gLatitude, gLongitude) {
+function initMap(gLatitude, gLongitude, gAddress) {
   // Create a map object and specify the DOM element for display.
-   
+  
+  var mapTitle = gAddress;
   var map = new google.maps.Map(document.getElementById('mapCanvas'), {
     center: {lat: gLatitude, lng: gLongitude},
     scrollwheel: false,
-    zoom: 15
+    zoom: 18
   });
 
   var marker = new google.maps.Marker({
     position: {lat: gLatitude, lng: gLongitude},
     map: map,
-    title: 'Venue Name?'
+    title: mapTitle
   });
 
 
 }
+
+
+$('#cardHolder').on('click','.gmap', function(){
+   initMap($(this).data("data-lat"), $(this).data("data-lng"), $(this).data("data-addr"))
+});
