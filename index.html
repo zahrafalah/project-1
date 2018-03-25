@@ -76,8 +76,8 @@
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        <input id="inputSearch" class="form-control mr-sm-2" type="text" placeholder="Search">
+        <button id="searchButton" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
     </div>
 </nav>
@@ -88,7 +88,7 @@
         <div class="col-md-6">
             <div class="all invisible-scrollbar">
 
-                <div class="event">
+                <div id="cardHolder" class="event">
                   
 
                         <div class="card w-90">
@@ -134,7 +134,7 @@
                         The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p>
             </div>
             
-            <div class="map">Map</div>
+            <div class="map" id="mapCanvas">Map</div>
             
 
         </div>
@@ -160,6 +160,12 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+    <script type="text/javascript" src="http://api.eventful.com/js/api"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing"></script>
+    <script src="./assets/logic/login.js"></script>
+
 
 
 

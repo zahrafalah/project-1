@@ -89,8 +89,8 @@ function makeEventCards(){
       imageURL:resultItem.image.medium.url,
       description:eventDesc,
       descriptionPreview:desc_preview,
-      latitude : resultItem.latitude,
-      longitude : resultItem.longitude
+      latitude : parseFloat(resultItem.latitude),
+      longitude : parseFloat(resultItem.longitude)
     };
     resultItems.push(eventItem); //push item into temp array
     console.log(eventItem);
@@ -121,7 +121,7 @@ function makeEventCards(){
     $("#cardHolder").append(gMap);
 
     console.log(gLatitude, gLongitude, gElementID);
-    initMap(gElementID, gLatitude, gLongitude);
+    initMap(gLatitude, gLongitude);
     newCard.append(gMap);
     $("#cardHolder").append(newCard);
 
@@ -209,13 +209,16 @@ function removeMe(element)
     }
 
 
-$("#startButton").on("click",function(event){
+$("#searchButton").on("click",function(event){
+  alert("Hear me?");
   event.preventDefault();
-  userLocation = $("#startText").val().toString();
+  userLocation = $("#inputSearch").val().toString();
   console.log(userLocation);
   getEventfulEvents();//
 
 });
+
+
 
 
 //enhancement - allow the user to add additional keywords to their search - requires a text input field 
@@ -521,10 +524,10 @@ function initMap() {
 }
 
 
-function initMap(elementID, gLatitude, gLongitude) {
+function initMap(gLatitude, gLongitude) {
   // Create a map object and specify the DOM element for display.
    
-  var map = new google.maps.Map(document.getElementById(elementID), {
+  var map = new google.maps.Map(document.getElementById('mapCanvas'), {
     center: {lat: gLatitude, lng: gLongitude},
     scrollwheel: false,
     zoom: 15
