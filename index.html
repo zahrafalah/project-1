@@ -52,16 +52,14 @@
         </a>
       </div>
 
-      <button type="button" class="btn btn-default" aria-label="Left Align">
-          <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-      </button>
+     
 
     </div>
 
   </div>
   <embed src="/assets/images/BrightWish.mp3" width="180" height="90" loop autostart hidden="true" />
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav id="topbar" class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -99,19 +97,35 @@
 
         </div>
         <div class="col-md-6"> 
-            
-            <div class="favorite invisible-scrollbar" id="favorites">
+            <div id="signinForm" class="col-md-12 panel panel-primary" style="padding:0px">
+                <div class="panel-heading">
+                  <h4 class="panel-title text-center"><strong>Sign up or sign in here.<br> No email required!</strong></h4>
+                </div>
+                <div class="panel-body">
+        
+                  <!-- Entry Form -->
+                  <form id="signup" class="col-md-12">
+                    <div class="form-group">
+                      <label for="username-input">User Name<span ><h6 id="usernameError" style="color:red"></h6></span></label>
+                      <input class="form-control" required=true id="username-input" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label for="pin-input">PIN Code<span><h6>(min 4 characters)</h6></span><span ><h6 id="pinError" style="color:red"></h6></span></label>
+                      <input class="form-control" required=true id="pin-input" type="text">
+                    </div>
+                    <button class="btn btn-primary" id="add-user-btn" type="submit">Submit</button>
+                  </form>
+                </div>
+              </div>
+        
+            <div style="display:none" class="favorite invisible-scrollbar" id="favoriteHolder">
                 <h2>My Favorites</h2>
                 <div class="all invisible-scrollbar">
                     <div id="favoriteHolder" class="event">
                     </div>
                 </div>
                  
-              <!--  <p>
-                        Where does it come from?
-                        Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
-                        
-                        The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p> -->
+             
             </div>
             
             <div class="map" id="mapCanvas">Map</div>
