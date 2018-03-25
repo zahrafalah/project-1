@@ -87,14 +87,77 @@ function makeEventCards(){
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
-      description:eventDesc,
-      descriptionPreview:desc_preview,
+      description:resultItem.eventDesc,
+      descriptionPreview:resultItem.desc_preview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
     resultItems.push(eventItem); //push item into temp array
     console.log(eventItem);
     console.log("User Name is " + eventUserName);
+
+    var newCard = $("<div>");
+    newCard.addClass("card w-90");
+    
+    var newRow = $("<div>");
+    newRow.addClass("row");
+
+    var imgDivContainer = $("<div>");
+    imgDivContainer.addClass("col-md-3");
+    var theImage = $("<img>");
+    theImage.addClass("card-img");
+    theImage.attr("alt",resultItem.desc_preview);
+    theImage.attr("src",resultItem.imageURL);
+    imgDivContainer.append(theImage);
+
+    var cardDivContainer = $("<div>");
+    cardDivContainer.addClass("col-md-7");
+    var cardBody = $("<div>");
+    cardBody.addClass ("card-body");
+    var h5 = $("<h5>");
+    h5.addClass("card-title");
+    h5.text(resultItem.title);
+    var p = $("<p>");
+    p.addClass("card-text");
+    p.text(resultItem.eventDesc);
+    var aCard = $("<a>");
+    aCard.addClass("card-link");
+    aCard.attr("href",resultItem.venue_url);
+    aCard.text(resultItem.venue_name);
+    cardBody.append(h5);
+    cardBody.append(p);
+    cardBody.append(aCard);
+    cardDivContainer.append(cardBody);
+
+    var iconDivContainer = $("<div>");
+    iconDivContainer.addClass("col-md-2");
+    var iconDiv = $("<div>");
+    iconDiv.addClass("icon");
+    var iconA = $("a");
+    iconA.addClass("coverr-nav-item");
+    iconA.css("text-decoration", "none");
+    iconA.attr("href", "#coverrs");
+    var iconH1 = $("<h1>");
+    iconH1.addClass("text-white");
+    var iconI = $("<i>");
+    iconI.addClass("fas");
+    iconI.addClass("fa-star");
+
+    iconH1.append(iconI);
+    iconA.append(iconH1);
+    iconDiv.append(iconA);
+    iconDivContainer.append(iconDiv);
+
+    newRow.append(imgDivContainer);
+    newRow.append(cardDivContainer);
+    newRow.append(iconDivContainer);
+
+    newCard.append(newRow);
+
+
+
+
+    /*
     var newCard = $("<div>");
     var removeLink = $("<a/>");
     removeLink.attr("class","removeLink");
@@ -123,6 +186,7 @@ function makeEventCards(){
     console.log(gLatitude, gLongitude, gElementID);
     initMap(gLatitude, gLongitude);
     newCard.append(gMap);
+    */
     $("#cardHolder").append(newCard);
 
 
