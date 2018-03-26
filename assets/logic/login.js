@@ -4,7 +4,7 @@ var queryURL = "http://api.eventful.com/json/events/search?...&location=";
 var tag;
  
 
-var loginState=false;
+var loggedIn = "false";
 var userName;
 var pinCode;
 var addDate;
@@ -120,7 +120,7 @@ function makeEventCards(eventSet){
     h5.addClass("card-title");
     h5.text(eventItem.title);
     var h4=$("<h4>");
-    h4.html("Date: " + eventItem.startDate + "<br/>"  +" Starts in " + eventItem.daysUntil + " days" );
+    h4.html("Date: " + eventItem.startDate + "<br/>"  +" Days Until: " + eventItem.daysUntil );
 
     var p = $("<p>");
     p.addClass("card-text");
@@ -248,7 +248,7 @@ function loadEventCards(eventSet){
       venueURL:resultItem.venueURL,
       imageURL:resultItem.imageURL,
       description:resultItem.description === null?resultItem.title: resultItem.description,
-      descriptionPreview:resultItem.descriptionPreview === null? resultItem.title: resultItem.descriptionPreview,
+      descriptionPreview:resultItem.desc_preview === null? resultItem.title: resultItem.desc_preview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
@@ -355,15 +355,15 @@ function loadEventCards(eventSet){
   // add 'next 25 button'
   //i meant for this button to display at the end of the list of events, but it is
   //showing at the top
-  // $("#favoriteHolder").show();
-  // $("#signinForm").hide();
+  $("#favoriteHolder").css("visibility","visible");
+  $("#signinForm").css("display","none");
   
     var nextButton = $("<button>")
     nextButton.attr("id","getNext")
     nextButton.attr("class","btn btn-lg");
     nextButton.text("Get Next 25 Events");
 
-    $("#favoriteHolder").prepend(nextButton);
+    $("#favoriteHolder").append(nextButton);
 
 }
 
@@ -400,42 +400,38 @@ $('#favoriteHolder').on("click",".removeLink",function(){
 $('#cardHolder').on("click",".saveLink",function(){
   //check to see if user is logged in - if not, remindAboutSigningUp()
   //if user is logged in, proceed:
-   
-  // if($('#signinForm').css("display") === "none"){
-  //   loginState = true;
-  // }else{
-  //   loginState = false;
-  // }
-  if (loginState==false){
-    alert("Please sign up or log in to save events.");
-  } 
 
-  else {
+  
+  if($("#signinForm").css("display") === "none"){
+       //var id=$(this).parent().attr("id");
+       if($('#favoriteHolder').css("visibility") === "hidden"){
+        $('#favoriteHolder').css("visibility","visible");
+      }
     
-      //var id=$(this).parent().attr("id");
-  if($('#savedItems').css("visibility") === "hidden"){
-    $('#savedItems').css("visibility","visible");
+      var id=$(this).data("data-parentid");
+       
+      $("#favoriteHolder").prepend($('#' + id));
+      console.log("saving ID: ",id);
+      var itemIndex = findInArray(resultItems,"id",id);
+      //var saveObject = resultItems[i];
+      //push saveObject to users/saveditems
+    
+      
+      //move $(this).parent() to 'saved items' section (top right)
+      console.log("new resultItems count",resultItems.length);
+      
+       // Push the updated events to the database
+        //Note we are rewriting each time to resolve index issue
+        console.log(resultItems);
+        
+        database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
+    
+    
   }
-
-  var id=$(this).data("data-parentid");
+  
    
-  $("#favoriteHolder").prepend($('#' + id));
-  console.log("saving ID: ",id);
-  var itemIndex = findInArray(resultItems,"id",id);
-  //var saveObject = resultItems[i];
-  //push saveObject to users/saveditems
-
+ 
   
-  //move $(this).parent() to 'saved items' section (top right)
-  console.log("new resultItems count",resultItems.length);
-  
-   // Push the updated events to the database
-    //Note we are rewriting each time to resolve index issue
-    console.log(resultItems);
-    
-    database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
-
-  } 
       
 });
 
@@ -545,7 +541,7 @@ $("#add-user-btn").on("click", function(event) {
   var userName = $("#username-input").val().trim();
   var pinCode = $("#pin-input").val().trim();
   var addDate = moment().format("MM/DD/YYYY");
-  loginState = true;
+  var loginState = "loggedIn";
 
   // Create local temp object for holding new user data
   var newUser = {
@@ -574,16 +570,14 @@ $("#add-user-btn").on("click", function(event) {
       console.log("pinCode: "+resultPinCode);
       console.log("pincode input: " +pinCode);
       if (resultPinCode==pinCode) {
-        loginState=true;
-        $("#signinForm").hide();
-        $("#savedItems").show();
+        loginState="loggedIn";
          
       }
       var refEvent = database.ref("/users/" + eventUserName + "/savedEvents/");
       refEvent.on("value", function(snapshot){
         console.log("The array length is " + snapshot.val().length);
         var cardsArray = snapshot.val();
-        console.log("From the db");
+        console.log("Fron the db");
         console.log(cardsArray);
 
          
@@ -601,22 +595,16 @@ $("#add-user-btn").on("click", function(event) {
       //the favorites div and put a welcome message
       // Upload new user record to the database
       $("#signinForm").hide();
-      $("#savedItems").show();
+      $("#favoriteHolder").show();
       // $("#favoriteHolder").html("Welcome to Unborable! You can now click the Star on any item to save it.")
-      loginState=true;
+        
       database.ref("users/" + userName).set(newUser);
   
       //DO SOMETHING ELSE - REPLACE THE LOGIN FORM WITH THE USER'S SAVED ITEMS OR WHATEVER
       
     }
   });
-//unhide commercial div and go there to see the commercial when you click the 'what is unborable' button
-
-$(document).on("click","#showCommercial", function(event){
-  event.preventDefault();
-  $("#showMovie").attr("style","display:block");
-  window.location.hash = "#showMovie";
-});
+  
 
   // Logs everything to console
   console.log(newUser.userName);
@@ -660,7 +648,7 @@ $("#login-btn").on("click", function(event) {
 
           console.log("match");
           $("#loginError").text("That's a match! Welcome back.");
-          loginState=true;
+          loginState="loggedIn";
     //      $("#loginError").text("");
           console.log("usernm/userstate: " + userName, loginState);
 
@@ -687,7 +675,7 @@ $("#login-btn").on("click", function(event) {
         else {
              $("#loginError").text("That User ID/PIN combo does not match any in our records. Try again.");
              $("#login-pin").text("");
-            loginState=false;
+            loginState="notLoggedIn";
             console.log("usernm/userstate: " + userName, loginState)
 
         };
@@ -765,16 +753,6 @@ $('#cardHolder').on('click','.gmap', function(){
 $('#favoriteHolder').on('click','.gmap', function(){
    
   initMap($(this).data("data-lat"), $(this).data("data-lng"), $(this).data("data-addr"))
-});
-
-$('#changeLocation').on('click',function(e){
-   e.preventDefault();
-
-  
-  $("#cardHolder").empty();
-  userLocation = $("#changeLocationText").val().toString();
-  console.log(userLocation);
-  getEventfulEvents()
 });
 
 
