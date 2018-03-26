@@ -235,6 +235,10 @@ $('#cardHolder').on("click",".saveLink",function(){
   //if user is logged in, proceed:
    
   //var id=$(this).parent().attr("id");
+  if($('#favoriteHolder').css("visibility") === "hidden"){
+    $('#favoriteHolder').css("visibility","visible");
+  }
+
   var id=$(this).data("data-parentid");
    
   $("#favoriteHolder").append($('#' + id));

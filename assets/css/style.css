@@ -151,13 +151,20 @@ nav {
       height: 800px;
       margin: auto;
   }
-
-
-      
-  }
+    
+  
 .fa-times {
     color: rgb(255, 30, 0);
     height: 30px;
     width: 30px;
     margin-left: 10px;
+}
+
+#favorites{
+    display:none;
+}
+
+.hideFavorites{
+    visibility:hidden;
+    
 }
