@@ -742,3 +742,13 @@ $('#favoriteHolder').on('click','.gmap', function(){
   initMap($(this).data("data-lat"), $(this).data("data-lng"), $(this).data("data-addr"))
 });
 
+$('#changeLocation').on('click',function(e){
+   e.preventDefault();
+
+  
+  $("#cardHolder").empty();
+  userLocation = $("#changeLocationText").val().toString();
+  console.log(userLocation);
+  getEventfulEvents()
+});
+
