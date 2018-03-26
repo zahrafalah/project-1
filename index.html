@@ -16,18 +16,24 @@
 
 
     <link type="text/css" rel="stylesheet" href="./assets/css/style.css">
+
+
+    <!-- --------------------------------font-------------------------- -->
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Chicle|Faster+One" rel="stylesheet">
 </head>
 
-<body> 
+<body class="bg-dark"> 
 
   <div id="myVideo">
         <video autoplay loop class="vid">
             <source src="assets/images/Mt_Baker.mp4" type="video/mp4">
         </video>
         <div class="content">
-            <h1>Unborable</h1>
+            <h1 id="unborable">Unborable</h1>
 
-            <p>Let's find something to do.</p>
+            <p id='topP'>Don't be bored.<br>
+              Find where fun is happening in your location!</p>
          
             <div class="row">
               <div class="col-md-12">
@@ -41,7 +47,7 @@
             <div style="position: absolute; bottom: 20px; left: 50%; margin-left: -19px;">
               <a class="coverr-nav-item" href="#coverrs" style="text-decoration: none;">
                 <h1 class="text-white">
-                  <i class="fa fa-angle-down"></i>
+                  <!-- <i class="fa fa-angle-down"></i> -->
                 </h1>
               </a>
             </div>
@@ -67,7 +73,7 @@
   </div> -->
 
 
-  <nav id="topbar" class="navbar navbar-expand-lg navbar-light bg-light">    
+  <nav id="topbar" class="navbar sticky-top bg-secondary navbar-expand-lg navbar-light ">    
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>

@@ -5,17 +5,19 @@
 
 #firstSearch {
     position:absolute;
-    left:45%;
+    left:41.5%;
+    align-content: center;
 }
 .content {
-    height:500px;
+    height:350px;
     text-align:center;
-    padding-top:300px;
+    margin-top:300px;
 }
 body {
     margin: 0;    
     font-family: Arial;
     font-size: 17px;
+
 }
 
 #topbar {
@@ -52,8 +54,11 @@ footer {
     border: #dddddd solid 2px;
     float: right;
 }
-nav {
-    height: 50px;
+nav{
+    background-color: burlywood;
+    margin-bottom: 5px;
+    /* height: 50px; */
+     /* margin-bottom: 30px; */
 }
 
 #myVideo {
@@ -95,15 +100,13 @@ nav {
     cursor: pointer;
 }
 
-nav {
-    margin-bottom: 30px;
-}
+
 
 .card-img {
     float: left;
     /* width: 40px;
     height: 40px; */
-    margin-right: 5px;   
+  
     
 }
 .card-body {
@@ -119,6 +122,9 @@ nav {
     font-size: 12px;
 }
 .card-title{
+    font-style: italic;
+    font-weight: bold;
+     
     margin-bottom: 5px;
     font-size: 20px;
 
@@ -174,7 +180,7 @@ h4{
 
 }
 
-=======
+
 #favorites{
     display:none;
 }
@@ -183,4 +189,32 @@ h4{
     visibility:hidden;
     
 }
+#inputSearch{
+    margin: 5px;
+    
+}
 
+.card{
+    margin: 3px;
+    /* border: 1px blue; */
+}
+#unborable{
+    font-family: 'Faster One', 'cursive';
+    font-size:50px;
+    margin-bottom: 30px;
+
+}
+#topP{
+    font-family: 'Chicle', 'cursive';
+    font-size: 35px;
+
+}
+h4{
+    color: blue;
+}
+#mundefined{
+    color: grey;
+    font-style: italic;
+    font-weight: bold;
+
+}
