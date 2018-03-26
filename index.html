@@ -132,10 +132,37 @@
         </div>
 
       </div>
-      <div class="col-sm-6">
+      
+      <div class="col-md-6"> 
+        <div id="signinForm" class="col-md-12 panel panel-primary" style="padding:0px">
+            <div class="panel-heading">
+              <h4 class="panel-title text-center"><strong>Sign up or sign in here.<br> No email required!</strong></h4>
+            </div>
+            <div class="panel-body">
+    
+              <!-- Entry Form -->
+              <form id="signup" class="col-md-12">
+                <div class="form-group">
+                  <label for="username-input">User Name<span ><h6 id="usernameError" style="color:red"></h6></span></label>
+                  <input class="form-control" required=true id="username-input" type="text">
+                </div>
+                <div class="form-group">
+                  <label for="pin-input">PIN Code<span><h6>(min 4 characters)</h6></span><span ><h6 id="pinError" style="color:red"></h6></span></label>
+                  <input class="form-control" required=true id="pin-input" type="text">
+                </div>
+                <button class="btn btn-primary" id="add-user-btn" type="submit">Submit</button>
+              </form>
+            </div>
+          </div>
+    
         <div  class="favorite invisible-scrollbar" id="favoriteHolder" style="display:none">
-          <h>My Favorites</h>
-
+            <h2>My Favorites</h2>
+            <div class="all invisible-scrollbar">
+                <div id="favoriteHolder" class="event">
+                </div>
+            </div>
+             
+         
         </div>
 
         <div class="map">Map</div>
