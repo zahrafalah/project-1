@@ -120,6 +120,7 @@ nav {
 }
 .card-title{
     margin-bottom: 5px;
+    font-size: 20px;
 
 }
 .card-img, .card-body , .icon {
@@ -139,9 +140,7 @@ nav {
     overflow: auto;
     /* height: 2em; */
   }
-.icon{      
-      /* border:1px solid  rgb(112, 111, 111); */
-  }
+
 .container {
       margin-bottom: 80px;
   }
@@ -151,15 +150,31 @@ nav {
       height: 800px;
       margin: auto;
   }
-    
-  
-.fa-times {
-    color: rgb(255, 30, 0);
+
+
+
+.fa-times{
+    color:  rgb(255, 30, 0) !important;
+
     height: 30px;
     width: 30px;
     margin-left: 10px;
 }
 
+
+h4{
+    font-size:12px;
+    margin: 2px;
+}
+.fa-star{
+    color: yellow;
+    height: 30px;
+    width: 30px;
+    margin-left: 10px;
+
+}
+
+=======
 #favorites{
     display:none;
 }
@@ -168,3 +183,4 @@ nav {
     visibility:hidden;
     
 }
+
