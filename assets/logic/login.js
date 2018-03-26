@@ -2,6 +2,7 @@
 var clientID='Hv6x2ZbdqnFmcWVm';
 var queryURL = "http://api.eventful.com/json/events/search?...&location=";
 var tag;
+ 
 
 var loginState="loggedOut";
 var userName;
@@ -63,7 +64,7 @@ function makeEventCards(eventSet){
 
 
 
-    if(resultItem.description==null){      //error handling for NULL event description - just makes the 
+    if(resultItem.description===null){      //error handling for NULL event description - just makes the 
       var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
     }
     else var eventDesc=resultItem.description;
@@ -84,8 +85,8 @@ function makeEventCards(eventSet){
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
-      description:resultItem.eventDesc,
-      descriptionPreview:desc_preview,
+      description:resultItem.eventDesc === null?resultItem.title:resultItem.eventDesc ,
+      descriptionPreview:desc_preview === null ? resultItem.title : resultItem.desc_preview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
@@ -240,13 +241,13 @@ function loadEventCards(eventSet){
       venue:resultItem.venue,
       venueURL:resultItem.venueURL,
       imageURL:resultItem.imageURL,
-      description:resultItem.eventDesc,
-      descriptionPreview:desc_preview,
+      description:resultItem.description === null?resultItem.title: resultItem.description,
+      descriptionPreview:resultItem.desc_preview === null? resultItem.title: resultItem.desc_preview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
     resultItems.push(eventItem); //push item into temp array
-
+    console.log("The description is " + eventItem.description);
     var newCard = $("<div>");
     newCard.addClass("card w-90");
     newCard.attr("id", eventItem.id);
@@ -393,8 +394,8 @@ $('#favoriteHolder').on("click",".removeLink",function(){
 $('#cardHolder').on("click",".saveLink",function(){
   //check to see if user is logged in - if not, remindAboutSigningUp()
   //if user is logged in, proceed:
-   
-  //var id=$(this).parent().attr("id");
+  if(loginState==="loggedIn"){
+      //var id=$(this).parent().attr("id");
   if($('#favoriteHolder').css("visibility") === "hidden"){
     $('#favoriteHolder').css("visibility","visible");
   }
@@ -414,8 +415,11 @@ $('#cardHolder').on("click",".saveLink",function(){
    // Push the updated events to the database
     //Note we are rewriting each time to resolve index issue
     console.log(resultItems);
-    database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
     
+    database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
+
+  } 
+      
 });
 
 
