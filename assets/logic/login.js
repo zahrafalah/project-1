@@ -248,7 +248,7 @@ function loadEventCards(eventSet){
       venueURL:resultItem.venueURL,
       imageURL:resultItem.imageURL,
       description:resultItem.description === null?resultItem.title: resultItem.description,
-      descriptionPreview:resultItem.desc_preview === null? resultItem.title: resultItem.desc_preview,
+      descriptionPreview:resultItem.descriptionPreview === null? resultItem.title: resultItem.descriptionPreview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
@@ -348,7 +348,7 @@ function loadEventCards(eventSet){
 
     newCard.append(newRow);
     console.log("appending to favorite");
-        $("#favoriteHolder").append(newCard);
+        $("#favoriteHolder").prepend(newCard);
        
 
   }//end for loop
@@ -363,7 +363,7 @@ function loadEventCards(eventSet){
     nextButton.attr("class","btn btn-lg");
     nextButton.text("Get Next 25 Events");
 
-    $("#favoriteHolder").append(nextButton);
+    $("#favoriteHolder").prepend(nextButton);
 
 }
 
@@ -400,7 +400,15 @@ $('#favoriteHolder').on("click",".removeLink",function(){
 $('#cardHolder').on("click",".saveLink",function(){
   //check to see if user is logged in - if not, remindAboutSigningUp()
   //if user is logged in, proceed:
-  if(loginState==="loggedIn"){
+   
+  if($('#signinForm').css("display") === "none"){
+    loginState = true;
+  }else{
+    loginState = false;
+  }
+   
+  if(loginState === true ){
+    
       //var id=$(this).parent().attr("id");
   if($('#favoriteHolder').css("visibility") === "hidden"){
     $('#favoriteHolder').css("visibility","visible");
@@ -408,7 +416,7 @@ $('#cardHolder').on("click",".saveLink",function(){
 
   var id=$(this).data("data-parentid");
    
-  $("#favoriteHolder").append($('#' + id));
+  $("#favoriteHolder").prepend($('#' + id));
   console.log("saving ID: ",id);
   var itemIndex = findInArray(resultItems,"id",id);
   //var saveObject = resultItems[i];
