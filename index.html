@@ -27,16 +27,16 @@
         <div class="content">
             <h1>Unborable</h1>
 
-            <p>Lorem ipsum dolor sit amet, an his etiam torquatos. Tollit soleat phaedrum te duo, eum cu recteque expetendis neglegentur.
-              Cu mentitum maiestatis persequeris pro, pri ponderum tractatos ei. Id qui nemore latine molestiae, ad mutat oblique
-              delicatissimi pro.</p>
-
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                  <i class="fas fa-search"></i>
-              </button>
+            <p>Let's find something to do.</p>
+         
+            <div class="row">
+              <div class="col-md-12">
+            <form id="firstSearch" class="form-block my-2 my-lg-0">
+              <input id="inputSearch" class="form-control mr-sm-2" type="text" placeholder="Where are you?">
+              <button id="searchButton" class="btn btn-outline-success my-2 my-sm-0" type="submit">Get Going</button>
             </form>
+          </div>
+          </div>
 
             <div style="position: absolute; bottom: 20px; left: 50%; margin-left: -19px;">
               <a class="coverr-nav-item" href="#coverrs" style="text-decoration: none;">
@@ -67,7 +67,7 @@
   </div> -->
 
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">    
+  <nav id="topbar" class="navbar navbar-expand-lg navbar-light bg-light">    
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -85,60 +85,57 @@
           
           </li>
         </ul>
-
+        <form class="form-inline my-2 my-lg-0">
+          <input id="changeLocation" class="form-control mr-sm-2" type="text" placeholder="Search">
+          <button id="changeLocation" class="btn btn-outline-success my-2 my-sm-0" type="submit">Change Location</button>
+        </form>
       </div>
   </nav>
 
-  <div class="container">
+  <div class="container" id="searchContainer">
     <div class="row">
-      <div class="col-sm-6">
+      <div class="col-md-6">
+       
+             
         <div class="all invisible-scrollbar">
-
-          <div class="event">
-
-
-            <div class="card w-90">
-              <div class="row">
-
-
-                <div class="col-sm-3">
-                  <img class="card-img" src="assets/images/b.jpg" alt="Card image cap">
-                </div>
-
-
-                <div class="col-sm-7">
-                  <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                  </div>
-                </div>
-
-    <div class="col-sm-2">
-        <div class="icon">
-          <a class="coverr-nav-item" href="#coverrs" style="text-decoration: none;">
-            <h1 class="text-white">
-              <i class="fas fa-star"></i>
-            </h1>
-            <h2>
-              <i class="fa fa-times fa-2x" aria-hidden="true"></i>
-            </h2>
-          </a>
+          <div id="cardHolder" class="event">
+            </div>  
         </div>
+
       </div>
-              </div>
+      <div class="col-md-6"> 
+        <div id="signinForm" class="col-md-12 panel panel-primary" style="padding:0px">
+            <div class="panel-heading">
+              <h4 class="panel-title text-center"><strong>Sign up or sign in here.<br> No email required!</strong></h4>
+            </div>
+            <div class="panel-body">
+    
+              <!-- Entry Form -->
+              <form id="signup" class="col-md-12">
+                <div class="form-group">
+                  <label for="username-input">User Name<span ><h6 id="usernameError" style="color:red"></h6></span></label>
+                  <input class="form-control" required=true id="username-input" type="text">
+                </div>
+                <div class="form-group">
+                  <label for="pin-input">PIN Code<span><h6>(min 4 characters)</h6></span><span ><h6 id="pinError" style="color:red"></h6></span></label>
+                  <input class="form-control" required=true id="pin-input" type="text">
+                </div>
+                <button class="btn btn-primary" id="add-user-btn" type="submit">Submit</button>
+              </form>
             </div>
           </div>
+    
+        <div  class="favorite hideFavorites invisible-scrollbar"  >
+            <h2>My Favorites</h2>
+            <div class="all invisible-scrollbar">
+                <div id="favoriteHolder" class="event">
+                </div>
+            </div>
+             
+         
         </div>
 
-      </div>
-      <div class="col-sm-6">
-        <div  class="favorite invisible-scrollbar" id="favoriteHolder" style="display:none">
-          <h>My Favorites</h>
-
-        </div>
-
-        <div class="map">Map</div>
+        <div class="map" id="mapCanvas"></div>
 
 
       </div>
@@ -164,7 +161,12 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
-
+  <!--- Custom Scripting -->
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+    <script type="text/javascript" src="http://api.eventful.com/js/api"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing"></script>
+    <script src="./assets/logic/login.js"></script>
 
 
 

@@ -152,12 +152,15 @@ nav {
   }
 
 
+
 .fa-times{
     color:  rgb(255, 30, 0) !important;
+
     height: 30px;
     width: 30px;
     margin-left: 10px;
 }
+
 
 h4{
     font-size:12px;
@@ -169,5 +172,15 @@ h4{
     width: 30px;
     margin-left: 10px;
 
+}
+
+=======
+#favorites{
+    display:none;
+}
+
+.hideFavorites{
+    visibility:hidden;
+    
 }
 
