@@ -203,6 +203,8 @@ function makeEventCards(eventSet){
 
     $("#cardHolder").append(nextButton);
 
+    location.hash = "#navbarTogglerDemo02";
+
 }
 
 function loadEventCards(eventSet){
