@@ -168,7 +168,7 @@ function makeEventCards(eventSet){
     var iconBH1 = $("<h1>");
     var iconBI = $("<i>");
     iconBI.addClass("fas");
-    iconBI.addClass("fa-ban");
+    iconBI.addClass("fa-times");
     iconH1.append(iconI);
     iconA.append(iconH1);
     iconDiv.append(iconA);
