@@ -28,6 +28,8 @@ var oArgs = {
 function getEventfulEvents(){
   oArgs.where=userLocation; //set location for query arguments
   EVDB.API.call("/events/search", oArgs, function(results) {
+    console.log("from eventful");
+    console.log(results);
   // Note: this relies on the custom toString() methods below
   resultSet = results;
    
@@ -85,11 +87,13 @@ function makeEventCards(eventSet){
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
-      description:resultItem.eventDesc === null?resultItem.title:resultItem.eventDesc ,
+      description:resultItem.description === null?resultItem.title:resultItem.description ,
       descriptionPreview:desc_preview === null ? resultItem.title : resultItem.desc_preview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
+
+    console.log("The description is " + eventItem.description);
     resultItems.push(eventItem); //push item into temp array
 
     var newCard = $("<div>");
@@ -120,7 +124,7 @@ function makeEventCards(eventSet){
 
     var p = $("<p>");
     p.addClass("card-text");
-    p.html(eventItem.descriptionPreview);
+    p.html(eventItem.description);
     
     var aCard = $("<a>"); 
     aCard.addClass("card-link");
@@ -276,7 +280,7 @@ function loadEventCards(eventSet){
 
     var p = $("<p>");
     p.addClass("card-text");
-    p.html(eventItem.descriptionPreview);
+    p.html(eventItem.description);
     
     var aCard = $("<a>"); 
     aCard.addClass("card-link");
