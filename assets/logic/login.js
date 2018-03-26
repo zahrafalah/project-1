@@ -76,8 +76,8 @@ function makeEventCards(eventSet){
       city:resultItem.city_name,
       state:resultItem.region_abbr,
       zip:resultItem.postal_code,
-      startTime:startsAt,
-      startDate:startDate,
+      startTime:moment(resultItem.start_time).format("hh:mm:ss a"),
+      startDate:moment(resultItem.start_time).format("ddd MMM DD"),
       daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": Math.abs(moment().diff(moment(resultItem.start_time), "days")),
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
@@ -112,6 +112,9 @@ function makeEventCards(eventSet){
     var h5 = $("<h3>");
     h5.addClass("card-title");
     h5.text(eventItem.title);
+    var h4=$("<h4>");
+    h4.html("Date: " + eventItem.startDate + "<br/>"  +" Days Until: " + eventItem.daysUntil );
+
     var p = $("<p>");
     p.addClass("card-text");
     p.html(eventItem.descriptionPreview);
@@ -130,6 +133,7 @@ function makeEventCards(eventSet){
     divAddr.data("data-addr", eventItem.address);
 
     cardBody.append(h5);
+    cardBody.append(h4);
     cardBody.append(p);
     cardBody.append(aCard);
     cardBody.append(divAddr);
