@@ -120,7 +120,7 @@ function makeEventCards(eventSet){
     h5.addClass("card-title");
     h5.text(eventItem.title);
     var h4=$("<h4>");
-    h4.html("Date: " + eventItem.startDate + "<br/>"  +" Days Until: " + eventItem.daysUntil );
+    h4.html("Date: " + eventItem.startDate + "<br/>"  +" Starts in " + eventItem.daysUntil + " days" );
 
     var p = $("<p>");
     p.addClass("card-text");
