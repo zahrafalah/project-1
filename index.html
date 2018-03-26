@@ -40,6 +40,7 @@
             <form id="firstSearch" class="form-block my-2 my-lg-0">
               <input id="inputSearch" class="form-control mr-sm-2" type="text" placeholder="Where are you?">
               <button id="searchButton" class="btn btn-outline-success my-2 my-sm-0" type="submit">Get Going</button>
+              <button id="showCommercial" class="btn btn-outline-success my-2 my-sm-0" >What is Unborable?</button>
             </form>
           </div>
           </div>
@@ -58,19 +59,17 @@
   </div>
   
 
-  <!-- <div class="waiting">
+  <div id="showMovie" style="display:none">
         <div class="row">
-          <div class="col-sm-12">
+          <div  class="col-sm-12">
 
-            <div id="loader"></div>
-
-            <div style="display:none;" id="myDiv" class="animate-bottom">
-              <h2>Please Wait</h2>
-            </div>
+            <video controls="true" class="video">
+            <source src="assets/images/Unborablecommercial.webm" type="video/mp4">
+            </video>
 
           </div>
         </div>
-  </div> -->
+  </div>
 
 
   <nav id="topbar" class="navbar sticky-top bg-secondary navbar-expand-lg navbar-light ">    
@@ -92,7 +91,7 @@
           </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-          <input id="changeLocation" class="form-control mr-sm-2" type="text" placeholder="Search">
+          <input id="changeLocationText" class="form-control mr-sm-2" type="text" placeholder="Search">
           <button id="changeLocation" class="btn btn-outline-success my-2 my-sm-0" type="submit">Change Location</button>
         </form>
       </div>
@@ -131,7 +130,7 @@
             </div>
           </div>
     
-        <div  class="favorite hideFavorites invisible-scrollbar"  >
+        <div id="savedItems" class="favorite invisible-scrollbar" style="display:none">
             <h2>My Favorites</h2>
             <div class="all invisible-scrollbar">
                 <div id="favoriteHolder" class="event">

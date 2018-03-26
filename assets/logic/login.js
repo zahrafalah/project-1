@@ -2,8 +2,9 @@
 var clientID='Hv6x2ZbdqnFmcWVm';
 var queryURL = "http://api.eventful.com/json/events/search?...&location=";
 var tag;
+ 
 
-var loginState="loggedOut";
+var loginState=false;
 var userName;
 var pinCode;
 var addDate;
@@ -27,8 +28,12 @@ var oArgs = {
 function getEventfulEvents(){
   oArgs.where=userLocation; //set location for query arguments
   EVDB.API.call("/events/search", oArgs, function(results) {
+    console.log("from eventful");
+    console.log(results);
   // Note: this relies on the custom toString() methods below
   resultSet = results;
+   
+   
   makeEventCards(resultSet);
   });
 }
@@ -61,7 +66,7 @@ function makeEventCards(eventSet){
 
 
 
-    if(resultItem.description==null){      //error handling for NULL event description - just makes the 
+    if(resultItem.description===null){      //error handling for NULL event description - just makes the 
       var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
     }
     else var eventDesc=resultItem.description;
@@ -82,11 +87,13 @@ function makeEventCards(eventSet){
       venue:resultItem.venue_name,
       venueURL:resultItem.venue_url,
       imageURL:resultItem.image.medium.url,
-      description:resultItem.eventDesc,
-      descriptionPreview:desc_preview,
+      description:resultItem.description === null?resultItem.title:resultItem.description ,
+      descriptionPreview:desc_preview === null ? resultItem.title : resultItem.desc_preview,
       latitude : parseFloat(resultItem.latitude),
       longitude : parseFloat(resultItem.longitude)
     };
+
+    console.log("The description is " + eventItem.description);
     resultItems.push(eventItem); //push item into temp array
 
     var newCard = $("<div>");
@@ -117,7 +124,7 @@ function makeEventCards(eventSet){
 
     var p = $("<p>");
     p.addClass("card-text");
-    p.html(eventItem.descriptionPreview);
+    p.html(eventItem.description);
     
     var aCard = $("<a>"); 
     aCard.addClass("card-link");
@@ -196,6 +203,168 @@ function makeEventCards(eventSet){
 
     $("#cardHolder").append(nextButton);
 
+    location.hash = "#navbarTogglerDemo02";
+
+}
+
+function loadEventCards(eventSet){
+  console.log("made it to load event cards");
+  console.log(eventSet);
+  //for each event item in the result set, make an item that we can use and push it into a temporary array
+  //called resultItems. we can then use these items to create the cards, push to the user's saved items, etc
+  //we can reference the item in the array by the unique 'id' value
+  for (var i=0;i<eventSet.length;i++){
+    var resultItem = eventSet[i]; 
+
+    var startDate = moment(resultItem.start_time).format("ddd MM/DD/YYYY");
+    var startsAt = moment(resultItem.start_time).format("h:mm A");
+ 
+    if (resultItem.imageURL==null){
+      var imageURL="./assets/images/noimg.png";
+      }
+    else {imageURL=resultItem.imageURL;};
+ 
+
+
+    if(resultItem.description==null){      //error handling for NULL event description - just makes the 
+      var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
+    }
+    else var eventDesc=resultItem.description;
+
+    if (eventDesc.length>=151)
+    {var desc_preview=eventDesc.substring(0,151)+"...";} //if the description is long, grab the first 150 characters of the description
+    else {var desc_preview= eventDesc }; //otherwise, just show the description
+    var eventItem = {
+      id:resultItem.id.split('@').join(''),
+      title:resultItem.title,
+      address:resultItem.address,
+      city:resultItem.city,
+      state:resultItem.state,
+      zip:resultItem.zip,
+      startTime:moment(resultItem.startTime).format("hh:mm:ss a"),
+      startDate:moment(resultItem.startTime).format("ddd MMM DD"),
+      daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": Math.abs(moment().diff(moment(resultItem.start_time), "days")),
+      venue:resultItem.venue,
+      venueURL:resultItem.venueURL,
+      imageURL:resultItem.imageURL,
+      description:resultItem.description === null?resultItem.title: resultItem.description,
+      descriptionPreview:resultItem.descriptionPreview === null? resultItem.title: resultItem.descriptionPreview,
+      latitude : parseFloat(resultItem.latitude),
+      longitude : parseFloat(resultItem.longitude)
+    };
+    resultItems.push(eventItem); //push item into temp array
+    console.log("The description is " + eventItem.description);
+    var newCard = $("<div>");
+    newCard.addClass("card w-90");
+    newCard.attr("id", eventItem.id);
+    
+    var newRow = $("<div>");
+    newRow.addClass("row");
+
+    var imgDivContainer = $("<div>");
+    imgDivContainer.addClass("col-md-3");
+    var theImage = $("<img>");
+    theImage.addClass("card-img");
+    theImage.attr("alt",eventItem.desc_preview);
+    theImage.attr("src",eventItem.imageURL);
+    theImage.attr("id","s" + eventItem.id);
+    imgDivContainer.append(theImage);
+
+    var cardDivContainer = $("<div>");
+    cardDivContainer.addClass("col-md-7");
+    var cardBody = $("<div>");
+    cardBody.addClass ("card-body col-md-12");
+    var h5 = $("<h3>");
+    h5.addClass("card-title");
+    h5.text(eventItem.title);
+    var h4=$("<h4>");
+    h4.html("Date: " + eventItem.startDate + "<br/>"  +" Days Until: " + eventItem.daysUntil );
+
+    var p = $("<p>");
+    p.addClass("card-text");
+    p.html(eventItem.description);
+    
+    var aCard = $("<a>"); 
+    aCard.addClass("card-link");
+    aCard.attr("href",eventItem.venue_url);
+    aCard.text(eventItem.venue_name);
+    
+    var divAddr = $("<div>"); 
+    divAddr.attr("id", "m"+eventItem.eventID);
+    divAddr.addClass("gmap col-md-12");
+    divAddr.html(eventItem.city + " , " + eventItem.state);
+    divAddr.data("data-lng", eventItem.longitude);
+    divAddr.data("data-lat", eventItem.latitude);
+    divAddr.data("data-addr", eventItem.address);
+
+    cardBody.append(h5);
+    cardBody.append(h4);
+    cardBody.append(p);
+    cardBody.append(aCard);
+    cardBody.append(divAddr);
+     
+    cardDivContainer.append(cardBody);
+    
+    var iconDivContainer = $("<div>");
+    iconDivContainer.addClass("col-md-2");
+    var iconDiv = $("<div>");
+    iconDiv.addClass("icon");
+    var iconA = $("<a>");
+    iconA.attr("id", "a" + eventItem.id );
+    iconA.data("data-parentid", eventItem.id);
+    iconA.addClass("saveLink");
+    iconA.addClass("coverr-nav-item");
+    iconA.css("text-decoration", "none");
+    iconA.attr("href", "#coverrs");
+    iconA.attr("title","Save This!");
+    var iconH1 = $("<h1>");
+    var iconI = $("<i>");
+    iconI.addClass("fas");
+    iconI.addClass("fa-star");
+
+    var iconB = $("<a>");
+    iconB.attr("id", "b" + eventItem.id );
+    iconB.attr("title","Not Interested");
+    iconB.data("data-parentid", eventItem.id);
+    iconB.addClass("removeLink");
+    iconB.addClass("coverr-nav-item");
+    iconB.css("text-decoration", "none");
+    iconB.attr("href", "#coverrs");
+    var iconBH1 = $("<h1>");
+    var iconBI = $("<i>");
+    iconBI.addClass("fas");
+    iconBI.addClass("fa-ban");
+    iconH1.append(iconI);
+    iconA.append(iconH1);
+    iconDiv.append(iconA);
+    iconBH1.append(iconBI);
+    iconB.append(iconBH1);
+    iconDiv.append(iconB);
+    iconDivContainer.append(iconDiv);
+
+    newRow.append(imgDivContainer);
+    newRow.append(cardDivContainer);
+    newRow.append(iconDivContainer);
+
+    newCard.append(newRow);
+    console.log("appending to favorite");
+        $("#favoriteHolder").append(newCard);
+       
+
+  }//end for loop
+  // add 'next 25 button'
+  //i meant for this button to display at the end of the list of events, but it is
+  //showing at the top
+  // $("#favoriteHolder").show();
+  // $("#signinForm").hide();
+  
+    var nextButton = $("<button>")
+    nextButton.attr("id","getNext")
+    nextButton.attr("class","btn btn-lg");
+    nextButton.text("Get Next 25 Events");
+
+    $("#favoriteHolder").prepend(nextButton);
+
 }
 
 //make the 'not interested' link do something
@@ -203,9 +372,7 @@ function makeEventCards(eventSet){
 $('#cardHolder').on("click",".removeLink",function(){
    
   var id=$(this).data("data-parentid");
-  
-   
-
+ 
   var itemIndex = findInArray(resultItems,"id",id);
       resultItems.splice(itemIndex,1);//remove item from resultItems array
       $("#"+id).remove(); 
@@ -234,14 +401,25 @@ $('#cardHolder').on("click",".saveLink",function(){
   //check to see if user is logged in - if not, remindAboutSigningUp()
   //if user is logged in, proceed:
    
-  //var id=$(this).parent().attr("id");
-  if($('#favoriteHolder').css("visibility") === "hidden"){
-    $('#favoriteHolder').css("visibility","visible");
+  // if($('#signinForm').css("display") === "none"){
+  //   loginState = true;
+  // }else{
+  //   loginState = false;
+  // }
+  if (loginState==false){
+    alert("Please sign up or log in to save events.");
+  } 
+
+  else {
+    
+      //var id=$(this).parent().attr("id");
+  if($('#savedItems').css("visibility") === "hidden"){
+    $('#savedItems').css("visibility","visible");
   }
 
   var id=$(this).data("data-parentid");
    
-  $("#favoriteHolder").append($('#' + id));
+  $("#favoriteHolder").prepend($('#' + id));
   console.log("saving ID: ",id);
   var itemIndex = findInArray(resultItems,"id",id);
   //var saveObject = resultItems[i];
@@ -254,8 +432,11 @@ $('#cardHolder').on("click",".saveLink",function(){
    // Push the updated events to the database
     //Note we are rewriting each time to resolve index issue
     console.log(resultItems);
-    database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
     
+    database.ref("users/"+ eventUserName + "/savedEvents").set(resultItems);
+
+  } 
+      
 });
 
 
@@ -364,7 +545,7 @@ $("#add-user-btn").on("click", function(event) {
   var userName = $("#username-input").val().trim();
   var pinCode = $("#pin-input").val().trim();
   var addDate = moment().format("MM/DD/YYYY");
-  var loginState = "loggedIn";
+  loginState = true;
 
   // Create local temp object for holding new user data
   var newUser = {
@@ -387,8 +568,30 @@ $("#add-user-btn").on("click", function(event) {
   //check database for duplicate user name
   database.ref("/users/"+userName).once("value").then(function(response) {
     if(response.val()!==null) {
-      $("#usernameError").text("That user name is already taken. Please choose another.");
-    }
+      //$("#usernameError").text("That user name is already taken. Please choose another.");
+      var key = response.child.key;
+      var resultPinCode=response.child("pinCode").val().toString();
+      console.log("pinCode: "+resultPinCode);
+      console.log("pincode input: " +pinCode);
+      if (resultPinCode==pinCode) {
+        loginState=true;
+        $("#signinForm").hide();
+        $("#savedItems").show();
+         
+      }
+      var refEvent = database.ref("/users/" + eventUserName + "/savedEvents/");
+      refEvent.on("value", function(snapshot){
+        console.log("The array length is " + snapshot.val().length);
+        var cardsArray = snapshot.val();
+        console.log("From the db");
+        console.log(cardsArray);
+
+         
+        loadEventCards(cardsArray);
+      });
+        
+
+        }
     else if (pinCode.length < 4) {
       $("#pinError").text("Your PIN must be at least 4 characters.");
       $("#pin-input").val("");
@@ -398,16 +601,22 @@ $("#add-user-btn").on("click", function(event) {
       //the favorites div and put a welcome message
       // Upload new user record to the database
       $("#signinForm").hide();
-      $("#favoriteHolder").show();
+      $("#savedItems").show();
       // $("#favoriteHolder").html("Welcome to Unborable! You can now click the Star on any item to save it.")
-        
+      loginState=true;
       database.ref("users/" + userName).set(newUser);
   
       //DO SOMETHING ELSE - REPLACE THE LOGIN FORM WITH THE USER'S SAVED ITEMS OR WHATEVER
       
     }
   });
-  
+//unhide commercial div and go there to see the commercial when you click the 'what is unborable' button
+
+$(document).on("click","#showCommercial", function(event){
+  event.preventDefault();
+  $("#showMovie").attr("style","display:block");
+  window.location.hash = "#showMovie";
+});
 
   // Logs everything to console
   console.log(newUser.userName);
@@ -451,7 +660,7 @@ $("#login-btn").on("click", function(event) {
 
           console.log("match");
           $("#loginError").text("That's a match! Welcome back.");
-          loginState="loggedIn";
+          loginState=true;
     //      $("#loginError").text("");
           console.log("usernm/userstate: " + userName, loginState);
 
@@ -466,12 +675,11 @@ $("#login-btn").on("click", function(event) {
             var cardsArray = snapshot.val();
             console.log(cardsArray);
 
-            for (var i=0;i<cardsArray.length;i++){
-
+             
             makeEventCards(cardsArray);
 
              
-            }//end for loop
+            
           }, function (error) {
             console.log("Error: " + error.code);
           });
@@ -479,7 +687,7 @@ $("#login-btn").on("click", function(event) {
         else {
              $("#loginError").text("That User ID/PIN combo does not match any in our records. Try again.");
              $("#login-pin").text("");
-            loginState="notLoggedIn";
+            loginState=false;
             console.log("usernm/userstate: " + userName, loginState)
 
         };
@@ -558,4 +766,15 @@ $('#favoriteHolder').on('click','.gmap', function(){
    
   initMap($(this).data("data-lat"), $(this).data("data-lng"), $(this).data("data-addr"))
 });
+
+$('#changeLocation').on('click',function(e){
+   e.preventDefault();
+
+  
+  $("#cardHolder").empty();
+  userLocation = $("#changeLocationText").val().toString();
+  console.log(userLocation);
+  getEventfulEvents()
+});
+
 
