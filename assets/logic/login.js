@@ -355,8 +355,8 @@ function loadEventCards(eventSet){
   // add 'next 25 button'
   //i meant for this button to display at the end of the list of events, but it is
   //showing at the top
-  $("#favoriteHolder").css("visibility","visible");
-  $("#signinForm").css("display","none");
+  $("#favoriteHolder").show();
+  $("#signinForm").hide();
   
     var nextButton = $("<button>")
     nextButton.attr("id","getNext")
