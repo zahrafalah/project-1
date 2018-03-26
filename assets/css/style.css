@@ -74,6 +74,12 @@ nav {
     width: 100%;
 }
 
+.video {
+    width:100%;
+    display: inline;
+    
+}
+
 .content {
     position: absolute;
     bottom: 51px;
@@ -163,14 +169,17 @@ nav {
 
 
 h4{
-    font-size:12px;
+    font-size:18px;
     margin: 2px;
 }
+
+
 .fa-star{
-    color: yellow;
+    color: darkgoldenrod;
     height: 30px;
     width: 30px;
     margin-left: 10px;
+
 
 }
 

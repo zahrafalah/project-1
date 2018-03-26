@@ -4,7 +4,7 @@ var queryURL = "http://api.eventful.com/json/events/search?...&location=";
 var tag;
  
 
-var loginState="loggedOut";
+var loginState=false;
 var userName;
 var pinCode;
 var addDate;
@@ -348,15 +348,15 @@ function loadEventCards(eventSet){
 
     newCard.append(newRow);
     console.log("appending to favorite");
-        $("#favoriteHolder").prepend(newCard);
+        $("#favoriteHolder").append(newCard);
        
 
   }//end for loop
   // add 'next 25 button'
   //i meant for this button to display at the end of the list of events, but it is
   //showing at the top
-  $("#favoriteHolder").show();
-  $("#signinForm").hide();
+  // $("#favoriteHolder").show();
+  // $("#signinForm").hide();
   
     var nextButton = $("<button>")
     nextButton.attr("id","getNext")
@@ -401,17 +401,20 @@ $('#cardHolder').on("click",".saveLink",function(){
   //check to see if user is logged in - if not, remindAboutSigningUp()
   //if user is logged in, proceed:
    
-  if($('#signinForm').css("display") === "none"){
-    loginState = true;
-  }else{
-    loginState = false;
-  }
-   
-  if(loginState === true ){
+  // if($('#signinForm').css("display") === "none"){
+  //   loginState = true;
+  // }else{
+  //   loginState = false;
+  // }
+  if (loginState==false){
+    alert("Please sign up or log in to save events.");
+  } 
+
+  else {
     
       //var id=$(this).parent().attr("id");
-  if($('#favoriteHolder').css("visibility") === "hidden"){
-    $('#favoriteHolder').css("visibility","visible");
+  if($('#savedItems').css("visibility") === "hidden"){
+    $('#savedItems').css("visibility","visible");
   }
 
   var id=$(this).data("data-parentid");
@@ -542,7 +545,7 @@ $("#add-user-btn").on("click", function(event) {
   var userName = $("#username-input").val().trim();
   var pinCode = $("#pin-input").val().trim();
   var addDate = moment().format("MM/DD/YYYY");
-  var loginState = "loggedIn";
+  loginState = true;
 
   // Create local temp object for holding new user data
   var newUser = {
@@ -571,14 +574,16 @@ $("#add-user-btn").on("click", function(event) {
       console.log("pinCode: "+resultPinCode);
       console.log("pincode input: " +pinCode);
       if (resultPinCode==pinCode) {
-        loginState="loggedIn";
+        loginState=true;
+        $("#signinForm").hide();
+        $("#savedItems").show();
          
       }
       var refEvent = database.ref("/users/" + eventUserName + "/savedEvents/");
       refEvent.on("value", function(snapshot){
         console.log("The array length is " + snapshot.val().length);
         var cardsArray = snapshot.val();
-        console.log("Fron the db");
+        console.log("From the db");
         console.log(cardsArray);
 
          
@@ -596,16 +601,22 @@ $("#add-user-btn").on("click", function(event) {
       //the favorites div and put a welcome message
       // Upload new user record to the database
       $("#signinForm").hide();
-      $("#favoriteHolder").show();
+      $("#savedItems").show();
       // $("#favoriteHolder").html("Welcome to Unborable! You can now click the Star on any item to save it.")
-        
+      loginState=true;
       database.ref("users/" + userName).set(newUser);
   
       //DO SOMETHING ELSE - REPLACE THE LOGIN FORM WITH THE USER'S SAVED ITEMS OR WHATEVER
       
     }
   });
-  
+//unhide commercial div and go there to see the commercial when you click the 'what is unborable' button
+
+$(document).on("click","#showCommercial", function(event){
+  event.preventDefault();
+  $("#showMovie").attr("style","display:block");
+  window.location.hash = "#showMovie";
+});
 
   // Logs everything to console
   console.log(newUser.userName);
@@ -649,7 +660,7 @@ $("#login-btn").on("click", function(event) {
 
           console.log("match");
           $("#loginError").text("That's a match! Welcome back.");
-          loginState="loggedIn";
+          loginState=true;
     //      $("#loginError").text("");
           console.log("usernm/userstate: " + userName, loginState);
 
@@ -676,7 +687,7 @@ $("#login-btn").on("click", function(event) {
         else {
              $("#loginError").text("That User ID/PIN combo does not match any in our records. Try again.");
              $("#login-pin").text("");
-            loginState="notLoggedIn";
+            loginState=false;
             console.log("usernm/userstate: " + userName, loginState)
 
         };
@@ -765,4 +776,5 @@ $('#changeLocation').on('click',function(e){
   console.log(userLocation);
   getEventfulEvents()
 });
+
 
