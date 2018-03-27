@@ -751,7 +751,6 @@ $('#cardHolder').on('click','.gmap', function(){
 
 
 $('#favoriteHolder').on('click','.gmap', function(){
-   
   initMap($(this).data("data-lat"), $(this).data("data-lng"), $(this).data("data-addr"))
 });
 
