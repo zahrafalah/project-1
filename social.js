@@ -5,7 +5,7 @@ function tweetCardInfo() {
         
 function tweetCardInfo() {
           var cardInfo = cardObject.title;
-          var tweetBtn = $('<a></a>').addClass('twitter-share-button').attr('href', 'http://twitter.com/share').attr('data-url', cardObject.imageLinks.thumbnail).attr('data-text', authors + bookObject.title);
+          var tweetBtn = $('<a></a>').addClass('twitter-share-button').attr('href', 'http://twitter.com/share').attr('data-url', cardObject.imageLinks.thumbnail).attr('data-text', authors + cardObject.title);
           $('.card-body').append(tweetBtn);
           twttr.widgets.load();
 }
