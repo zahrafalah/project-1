@@ -230,3 +230,29 @@ h4{
 button{
     margin: 5px;
 }
+
+#coverrs{
+    text-decoration: none;
+}
+
+#coverNav{
+    
+    position: absolute;
+    bottom:20px;
+    left: 50%;
+    margin-left: -19px;
+
+}
+
+#showMovie{
+    
+    display: none;
+}
+
+#signinForm{
+    padding: 0;
+}
+
+#usernameError, #pinError{
+    color:red;
+}

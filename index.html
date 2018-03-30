@@ -37,8 +37,8 @@
             </form>
           </div>
         </div>
-        <div style="position: absolute; bottom: 20px; left: 50%; margin-left: -19px;">
-          <a class="coverr-nav-item" href="#coverrs" style="text-decoration: none;">
+        <div  id="coverNav">
+          <a class="coverr-nav-item" href="#coverrs" >
             <h1 class="text-white">
               <!-- <i class="fa fa-angle-down"></i> -->
             </h1>
@@ -46,7 +46,7 @@
         </div>
     </div>
   </div>
-  <div id="showMovie" style="display:none">
+  <div id="showMovie" >
     <div class="row">
       <div  class="col-sm-12">
         <video controls="true" class="video">
@@ -85,7 +85,7 @@
         </div>
       </div>
     <div class="col-md-6"> 
-  <div id="signinForm" class="col-md-12 panel panel-primary" style="padding:0px">
+  <div id="signinForm" class="col-md-12 panel panel-primary" >
     <div class="panel-heading">
       <h4 class="panel-title text-center"><strong>Sign up or sign in here.<br> No email required!</strong></h4>
     </div>
@@ -93,11 +93,11 @@
   <!-- Entry Form -->
     <form id="signup" class="col-md-12">
      <div class="form-group">
-       <label for="username-input">User Name<span ><h6 id="usernameError" style="color:red"></h6></span></label>
+       <label for="username-input">User Name<span ><h6 id="usernameError" ></h6></span></label>
          <input class="form-control" required=true id="username-input" type="text">
      </div>
        <div class="form-group">
-         <label for="pin-input">PIN Code<span><h6>(min 4 characters)</h6></span><span ><h6 id="pinError" style="color:red"></h6></span></label>
+         <label for="pin-input">PIN Code<span><h6>(min 4 characters)</h6></span><span ><h6 id="pinError" ></h6></span></label>
          <input class="form-control" required=true id="pin-input" type="text">
        </div>
        <button class="btn btn-primary" id="add-user-btn" type="submit">Submit</button>
