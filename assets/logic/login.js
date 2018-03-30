@@ -90,39 +90,7 @@ function loadEventCards(eventSet){
     //var startsAt = moment(resultItem.start_time).format("h:mm A");
     console.log(resultItem);
     var eventItem = loadEvent(resultItem);
-    /*
-    if (resultItem.imageURL==null){
-      var imageURL="./assets/images/noimg.png";
-      }
-    else {imageURL=resultItem.imageURL;};
-    if(resultItem.description==null){      //error handling for NULL event description - just makes the 
-      var eventDesc=resultItem.title;   //description match the event title instead of displaying "null"
-    }
-    else var eventDesc=resultItem.description;
-
-    if (eventDesc.length>=151)
-    {var desc_preview=eventDesc.substring(0,151)+"...";} //if the description is long, grab the first 150 characters of the description
-    else {var desc_preview= eventDesc }; //otherwise, just show the description
-    var eventItem = {
-      id:resultItem.id.split('@').join(''),
-      title:resultItem.title,
-      address:resultItem.address,
-      city:resultItem.city,
-      state:resultItem.state,
-      zip:resultItem.zip,
-      startTime:moment(resultItem.startTime).format("hh:mm:ss a"),
-      startDate:moment(resultItem.startTime).format("ddd MMM DD"),
-      daysUntil: moment().diff(moment(resultItem.start_time), "days") === 0? "Happening TODAY!!": Math.abs(moment().diff(moment(resultItem.start_time), "days")),
-      venue:resultItem.venue,
-      venueURL:resultItem.venueURL,
-      imageURL:resultItem.imageURL,
-      description:resultItem.description === null?resultItem.title: resultItem.description,
-      descriptionPreview:desc_preview === null? resultItem.title: desc_preview,
-      latitude : parseFloat(resultItem.latitude),
-      longitude : parseFloat(resultItem.longitude)
-    };
-    */
-    resultItems.push(eventItem); //push item into temp array
+        resultItems.push(eventItem); //push item into temp array
      
      
     buildCard(eventItem,$("#favoriteHolder"));
@@ -219,6 +187,14 @@ $("#searchButton").on("click",function(event){
   
   getEventfulEvents();//
 
+});
+
+$("#changeLocation").on("click", function(event){
+  event.preventDefault();
+  window.location.hash = "searchContainer";
+  userLocation = $("#inputSearch").val().toString();
+  $('#cardHolder').empty();
+  getEventfulEvents();
 });
 
 
